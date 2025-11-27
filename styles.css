@@ -1,84 +1,60 @@
-/* --- Diseño Base y Centrado --- */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5; 
+    background-color: #f4f7f6;
     margin: 0;
     padding: 0;
-    text-align: center; 
+    text-align: center;
     color: #333;
-    padding-bottom: 70px; 
 }
-.main-centered-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    width: 100%;
-}
-/* ... [Estilos de Bloque 1 y Bloque 2 se mantienen] ... */
 
+h1 { margin: 20px 0; color: #1e3a34; }
 
-/* 3. RECTÁNGULO DEL CAMIÓN (Bloque 3 - CORREGIDO) */
-.truck-area-container {
-    width: 95%; 
-    max-width: 1400px; 
-    margin: 20px auto; 
+.form-container {
     background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: left; 
-    
-    /* DEFINIMOS ALTURA VISUAL PARA QUE CONTENGA AL REMOLQUE ESCALADO */
-    min-height: 250px; 
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: left;
 }
+.form-container h2 { font-size: 1.2em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+label { display: block; margin-top: 5px; }
+input[type="number"] { padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; width: 95%; }
+button { 
+    background-color: #4a90e2; 
+    color: white; border: none; padding: 10px 15px; 
+    font-size: 1em; cursor: pointer; border-radius: 4px;
+    transition: background-color 0.3s;
+    width: 48%; margin-right: 4%;
+}
+.action-button-secondary { background-color: #95a5a6; margin-right: 0; }
+button:hover { background-color: #357bd8; }
+
+#result { margin-top: 20px; font-weight: bold; color: #00796b; }
 
 .truck-container {
-    /* CORRECCIÓN CRÍTICA DE VISIBILIDAD */
-    /* Usamos Padding-Bottom para mantener la proporción de altura 
-       (Altura: 244px / Ancho: 1360px ≈ 17.9% del ancho total). 
-       Esto asegura la visibilidad del remolque escalado. */
-    width: 100%; 
-    padding-bottom: 17.94%; /* 244/1360 * 100 */
-    position: relative; 
-    margin: 0 auto;
-    overflow: hidden; 
-    border-radius: 6px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) inset;
-    background-color: #dbe4e6;
+    /* Contenedor visible y centrado */
+    width: 95%;
+    max-width: 1360px; 
+    margin: 20px auto;
+    overflow-x: auto; 
+    border: 2px solid #333;
+    background-color: #e0e0e0;
 }
 
 .truck {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* El remolque interno, que contiene los palets */
+    position: relative;
     width: 1360px; 
     height: 244px; 
-    
-    /* CRÍTICO: Aplicamos la escala aquí */
-    transform: scale(1); /* Dejamos la escala en 1 */
-    transform-origin: top left;
-    
-    margin: 0; 
-    border: 3px solid #7f8c8d; 
-    background-color: #ecf0f1; 
-    user-select: none; 
-    cursor: default;
-    
-    /* ESCALADO VISUAL POR CONTENEDOR */
-    /* Forzamos el camión a rellenar el espacio relativo */
-    width: 100%;
-    height: 100%;
-    
-    /* El bug de escala se corrige si solo usamos la proporción del contenedor */
-    /* Dejamos las dimensiones en 100% y usamos el padding-bottom del padre */
+    min-width: 1360px;
+    min-height: 244px;
 }
 
-/* --- Palets (Aseguramos que usen la escala correcta del padre) --- */
 .pallet {
     position: absolute;
-    /* Las dimensiones de los palets se inyectarán en CM/PX absolutos, 
-       pero su contenedor (.truck) tiene una dimensión relativa del 17.94% del ancho.
-       Esto garantiza que se vean a la escala correcta DENTRO del recuadro. */
     border: 2px solid #333;
     color: #fff;
     font-size: 12px;
@@ -86,7 +62,6 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 3px;
-    cursor: pointer;
+    cursor: pointer; 
     transition: all 0.2s ease;
 }
-/* ... [Resto de estilos de Bloque 4 se mantienen] ... */
