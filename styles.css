@@ -61,7 +61,7 @@ button:hover { background-color: #2c3e50; }
 .truck-container {
     width: 100%;
     margin: 0 auto;
-    overflow: hidden; 
+    overflow-x: auto;
     border: 3px solid var(--color-primary);
     background-color: var(--truck-bg);
     border-radius: 6px;
@@ -69,13 +69,13 @@ button:hover { background-color: #2c3e50; }
 .truck {
     position: relative;
     width: 1360px; 
+    height: 244px; 
     min-width: 1360px;
-    min-height: 240px; 
+    min-height: 244px;
 }
 .pallet {
     position: absolute;
-    border: none; /* ELIMINAR BORDE RÍGIDO */
-    box-shadow: 0 0 0 1.5px var(--color-primary); /* USAR SOMBRA COMO BORDE SIN AFECTAR DIMENSIONES */
+    border: 2px solid var(--color-primary);
     color: #fff;
     font-size: 12px;
     display: flex;
