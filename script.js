@@ -15,7 +15,9 @@ function getNextColor() {
     return color;
 }
 
-function clearPallets() {
+// **CORRECCIÓN CRÍTICA:** Define las funciones de control en el ámbito global.
+// Esto garantiza que el HTML (onclick="addPallets()") pueda encontrarlas.
+window.clearPallets = function() {
     pallets = [];
     nextPalletId = 0;
     nextGroupId = 1;
@@ -23,7 +25,7 @@ function clearPallets() {
     renderTruck();
 }
 
-function isPositionAvailable(x, y, pallet) {
+window.isPositionAvailable = function(x, y, pallet) {
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
         return false;
     }
@@ -40,7 +42,7 @@ function isPositionAvailable(x, y, pallet) {
     });
 }
 
-function addPallets() {
+window.addPallets = function() {
     const palletWidth = parseInt(document.getElementById('pallet-width').value);
     const palletLength = parseInt(document.getElementById('pallet-length').value);
     const palletQuantity = parseInt(document.getElementById('pallet-quantity').value);
@@ -75,6 +77,8 @@ function addPallets() {
 
     renderTruck();
 }
+
+// --- Funciones de Renderizado y LDM ---
 
 function renderTruck() {
     const truck = document.getElementById('truck');
@@ -115,7 +119,6 @@ function renderTruck() {
         palletDiv.id = `pallet-${pallet.id}`;
         
         palletDiv.style.backgroundColor = pallet.color;
-        
         palletDiv.style.width = `${pallet.length}px`;
         palletDiv.style.height = `${pallet.width}px`;
         palletDiv.style.left = `${pallet.x}px`;
@@ -148,7 +151,6 @@ function updateLinearMeters() {
         return acc;
     }, {});
 
-    // Renderizar la lista de grupos
     const groupSummaryDiv = document.getElementById('group-summary');
     const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
@@ -175,7 +177,7 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar con Colisión de Tope (ESTABLE) ---
+// --- Lógica de Arrastrar y Soltar con Colisión de Tope ---
 
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
