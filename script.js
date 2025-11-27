@@ -116,7 +116,7 @@ function isPositionAvailable(x, y, pW, pL, currentPallet) {
 }
 
 /**
- * Lógica First-Fit optimizada (Prioriza Y luego X para llenar el ancho).
+ * Lógica First-Fit optimizada.
  */
 function findBestFitPosition(pallet, tryRotation) {
     
@@ -144,8 +144,9 @@ function findBestFitPosition(pallet, tryRotation) {
 }
 
 /**
- * FINAL: Prioriza llenar horizontalmente (X) antes de pasar a la siguiente línea (Y), 
- * lo que evita huecos centrales al usar palets grandes.
+ * FINAL: Colocación Fila-Primero (Row-First).
+ * Prioriza llenar horizontalmente (X) antes de pasar a la siguiente línea (Y), 
+ * lo que llena el largo del camión en la fila superior (Y=0) antes de usar la fila Y=120.
  */
 function findFitAtLocation(pW, pL, currentPallet) {
     
