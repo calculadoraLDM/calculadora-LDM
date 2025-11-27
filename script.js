@@ -144,14 +144,16 @@ function findBestFitPosition(pallet, tryRotation) {
 }
 
 /**
- * Módificado para priorizar el eje X (columna) y luego el eje Y (fila dentro de columna).
+ * Módificado para priorizar el eje Y (vertical) y luego el eje X (horizontal).
  * Esto garantiza que se llene de ARRIBA A ABAJO antes de avanzar IZQUIERDA A DERECHA.
- * También asegura que el punto inicial es x=0, eliminando el espacio a la izquierda.
  */
 function findFitAtLocation(pW, pL, currentPallet) {
-    for (let x = 0; x <= TRUCK_WIDTH - pL; x++) { // Bucle exterior: Prioriza el eje X (izquierda a derecha)
-        for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) { // Bucle interior: Prioriza el eje Y (arriba a abajo)
+    // Bucle exterior: Prioriza el eje X (izquierda a derecha) para encontrar la primera columna vacía.
+    for (let x = 0; x <= TRUCK_WIDTH - pL; x++) { 
+        // Bucle interior: Prioriza el eje Y (arriba a abajo) para llenar la columna.
+        for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
             if (isPositionAvailable(x, y, pW, pL, currentPallet)) {
+                // Al encontrar el primer spot (x=0, y=0), lo devuelve, forzando la colocación pegada a la pared.
                 return { x, y };
             }
         }
@@ -274,7 +276,6 @@ function endDrag() {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // Auto-fit inicial solo para palets que no han sido colocados (placed: false)
     pallets.forEach(pallet => {
         if (!pallet.placed) {
             let placement = findBestFitPosition(pallet, true); 
