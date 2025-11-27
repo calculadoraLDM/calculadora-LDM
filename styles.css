@@ -1,13 +1,12 @@
 /* Estilos generales */
 body {
     font-family: 'Arial', sans-serif;
-    background: url('camiones-pattern.png') repeat; /* Fondo con patrón de camiones */
-    background-size: 150px 150px; /* Ajusta el tamaño del patrón */
+    /* Usar un color simple en lugar de patrón para facilitar la vista */
+    background-color: #f4f7f6; 
     margin: 0;
     padding: 0;
     text-align: center;
     color: #333;
-    text-transform: uppercase;
 }
 
 /* Encabezado */
@@ -15,35 +14,51 @@ h1 {
     font-size: 2.5em;
     margin-top: 20px;
     color: #1e3a34; /* Verde oscuro */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #00796b;
+    margin-bottom: 10px;
 }
 
 /* Contenedor del formulario */
 .form-container {
     background-color: #ffffff;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 20px;
+    border-radius: 10px;
     margin: 20px auto;
-    width: 50%;
-    max-width: 450px;
+    width: 90%;
+    max-width: 400px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
 }
 
 /* Estilo para los campos de entrada */
+.form-container label {
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+    font-weight: bold;
+}
+
 input[type="number"] {
-    padding: 8px;
-    margin: 10px 0;
-    border: 2px solid #4caf50; /* Verde */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    width: calc(100% - 24px);
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no añada ancho */
     font-size: 1em;
     background-color: #f9f9f9;
 }
 
 input[type="number"]:focus {
     outline: none;
-    border-color: #004d40; /* Verde oscuro */
-    box-shadow: 0 0 5px rgba(0, 77, 64, 0.5);
+    border-color: #00796b; /* Verde oscuro */
+    box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
 }
 
 /* Botón */
@@ -51,66 +66,87 @@ button {
     background-color: #ff8f00; /* Naranja oscuro */
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     font-size: 1.1em;
+    font-weight: bold;
     cursor: pointer;
     border-radius: 5px;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s;
+    width: 100%;
+    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #d9534f; /* Naranja más oscuro */
-    transform: scale(1.05);
+    background-color: #e67c00; 
+}
+
+button:active {
+    transform: scale(0.98);
 }
 
 /* Resultado */
 #result {
-    font-size: 1.2em;
-    margin-top: 20px;
+    font-size: 1.5em;
+    margin-top: 30px;
+    margin-bottom: 20px;
     font-weight: bold;
-    color: #00796b;
+    color: #1e3a34;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Contenedor del camión */
+/* Contenedor del camión para centrar */
+.truck-container {
+    max-width: 1360px; /* Ancho máximo igual al del camión */
+    margin: 20px auto;
+    overflow-x: auto; /* Permite desplazamiento si la pantalla es pequeña */
+}
+
+/* Contenedor del camión (la 'caja') */
 .truck {
     position: relative;
-    width: 1360px; /* Ancho del camión */
-    height: 244px; /* Alto del camión */
-    margin: 20px auto;
-    border: 2px solid #333;
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 1360px; /* Ancho del camión (1360 cm) */
+    height: 244px; /* Alto del camión (244 cm) */
+    margin: 0 auto;
+    border: 5px solid #333;
+    background-color: #b0bec5; /* Gris claro que parece suelo */
+    border-radius: 5px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Deshabilitar selección de texto para mejor experiencia de arrastre */
+    user-select: none; 
+    cursor: default;
 }
 
 /* Animación al añadir un palet */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .pallet {
     position: absolute;
-    background-color: #ff7043; /* Naranja brillante */
-    border: 2px solid #d84315; /* Bordes naranjas oscuros */
+    border: 2px dashed #000000; /* Bordes punteados para simular madera/espacio */
     color: #fff;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 3px;
+    cursor: grab; /* Indica que es arrastrable */
+    transition: box-shadow 0.1s ease-in-out; 
     animation: fadeIn 0.4s ease-in-out;
+    z-index: 1; /* Valor por defecto */
+    opacity: 0.9;
 }
 
-/* Añadir espacio entre los campos de entrada */
-.form-container label {
-    font-size: 1em;
-    margin-bottom: 5px;
-    display: block;
+.pallet:active {
+    cursor: grabbing; /* Indica que se está arrastrando */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Sombra blanca al arrastrar */
+    opacity: 1;
 }
