@@ -144,14 +144,15 @@ function findBestFitPosition(pallet, tryRotation) {
 }
 
 /**
- * Módificado para priorizar el eje Y (vertical) y luego el eje X (horizontal).
- * Esto garantiza que se llene de ARRIBA A ABAJO antes de avanzar IZQUIERDA A DERECHA.
+ * FINAL: Prioriza llenar horizontalmente (X) antes de pasar a la siguiente línea (Y), 
+ * lo que evita huecos centrales al usar palets grandes.
  */
 function findFitAtLocation(pW, pL, currentPallet) {
-    // Bucle exterior: Prioriza el eje X (izquierda a derecha) para encontrar la primera columna vacía.
-    for (let x = 0; x <= TRUCK_WIDTH - pL; x++) { 
-        // Bucle interior: Prioriza el eje Y (arriba a abajo) para llenar la columna.
-        for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
+    
+    // Bucle exterior: Prioriza el eje Y (Arriba a abajo) para encontrar la primera fila libre.
+    for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) { 
+        // Bucle interior: Prioriza el eje X (Izquierda a derecha) para llenar la fila.
+        for (let x = 0; x <= TRUCK_WIDTH - pL; x++) {
             if (isPositionAvailable(x, y, pW, pL, currentPallet)) {
                 return { x, y };
             }
@@ -315,11 +316,11 @@ function renderTruck() {
         truck.appendChild(palletDiv);
         
         maxX = Math.max(maxX, pallet.x + palletL);
-        maxY = Math.max(maxY, pallet.y + palletW); // Actualiza la altura máxima ocupada
+        maxY = Math.max(maxY, pallet.y + palletW); 
     });
     
     // 3. Ajustar la altura visual del contenedor del camión a la altura ocupada
-    const truckHeight = Math.max(maxY, 240); // Asegura un mínimo de 240px si está vacío
+    const truckHeight = Math.max(maxY, 240); // 240px como altura mínima si está vacío.
     truck.style.height = `${truckHeight}px`;
     truck.style.minHeight = `${truckHeight}px`;
 
