@@ -1,16 +1,15 @@
-const TRUCK_WIDTH = 1360; 
-const TRUCK_HEIGHT = 244; 
+const TRUCK_WIDTH = 1360; // 13.6m en cm
+const TRUCK_HEIGHT = 244; // 2.44m en cm
 const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#1abc9c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
 let pallets = [];
 let nextPalletId = 0;
 let nextGroupId = 1; 
 let colorIndex = 0; 
-let currentPallet = null;
+let currentPallet = null; 
 
-// Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
-window.removeGroupByGroupid = removeGroupByGroupid; // NUEVA FUNCIÓN GLOBAL
+window.removeGroupByGroupid = removeGroupByGroupid;
 
 function getNextColor() {
     const color = COLORS[colorIndex % COLORS.length];
@@ -25,15 +24,8 @@ function clearPallets() {
     renderTruck();
 }
 
-/**
- * **NUEVA FUNCIÓN:** Elimina todos los palets de un grupo específico.
- */
 function removeGroupByGroupid(groupIdToRemove) {
-    // 1. Filtra la lista de palets, excluyendo aquellos con el ID de grupo a eliminar.
     pallets = pallets.filter(p => p.groupId !== groupIdToRemove);
-    
-    // 2. Re-renderiza para aplicar los cambios y recalcular LDM.
-    // Esto fuerza una recolocación de los palets restantes si hubiera huecos.
     renderTruck();
 }
 
@@ -65,9 +57,7 @@ function addPallets() {
             color: color,
             x: 0, 
             y: 0,
-            placed: false,
-            lastValidX: 0, 
-            lastValidY: 0
+            placed: false
         });
     }
 
@@ -75,7 +65,6 @@ function addPallets() {
 }
 
 function isPositionAvailable(x, y, pallet) {
-    // ... [Lógica de límites y colisión] ...
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
         return false;
     }
@@ -95,7 +84,11 @@ function isPositionAvailable(x, y, pallet) {
     });
 }
 
+/**
+ * Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ */
 function findBestFitY(currentPallet) {
+    // Buscamos el hueco más a la izquierda (X) y lo más arriba posible (Y)
     for (let x = 0; x <= TRUCK_WIDTH - currentPallet.length; x++) {
         for (let y = 0; y <= TRUCK_HEIGHT - currentPallet.width; y++) {
             if (isPositionAvailable(x, y, currentPallet)) {
@@ -119,8 +112,6 @@ function renderTruck() {
                 pallet.x = placement.x;
                 pallet.y = placement.y;
                 pallet.placed = true;
-                pallet.lastValidX = placement.x;
-                pallet.lastValidY = placement.y;
             } else {
                 console.warn(`Palet ${pallet.id} no pudo ser colocado.`);
             }
@@ -137,15 +128,13 @@ function renderTruck() {
         
         const palletDiv = document.createElement('div');
         palletDiv.className = 'pallet';
-        palletDiv.id = `pallet-${pallet.id}`;
         palletDiv.style.backgroundColor = pallet.color; 
         palletDiv.style.width = `${palletL}px`;
         palletDiv.style.height = `${palletW}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
-        palletDiv.textContent = `${pallet.id}`; 
+        palletDiv.textContent = `${pallet.groupId}`; // Mostrar el ID de Grupo
         
-        // Añadir eventos (Arrastre si está implementado)
         truck.appendChild(palletDiv);
         
         maxX = Math.max(maxX, pallet.x + palletL);
@@ -155,7 +144,7 @@ function renderTruck() {
 }
 
 /**
- * **CRÍTICO:** Calcula LDM por Grupo, ordena y añade el botón de eliminar.
+ * Calcula LDM por Grupo y Total.
  */
 function updateLinearMeters() {
     let maxXTotal = 0;
@@ -175,29 +164,26 @@ function updateLinearMeters() {
         return acc;
     }, {});
 
-    // 1. Calcular LDM final y ordenar
-    const groupList = Object.values(groups).map(group => {
-        group.ldmValue = group.maxX / 100;
-        return group;
-    }).sort((a, b) => b.ldmValue - a.ldmValue); // Orden descendente por LDM
-
-    // 2. Renderizar resumen LDM
+    // Renderizar resumen LDM
     const groupSummaryDiv = document.getElementById('group-summary');
     const totalLdmValueSpan = document.getElementById('total-ldm-value');
     const resultParagraph = document.getElementById('result');
+
+    const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
     if (groupSummaryDiv) {
         if (groupList.length === 0) {
             groupSummaryDiv.innerHTML = '<p class="empty-message">Aún no hay cargas añadidas.</p>';
         } else {
             groupSummaryDiv.innerHTML = groupList.map(group => {
+                const ldm = (group.maxX / 100).toFixed(2);
                 return `
                     <div class="group-item">
                         <span>
                             <span class="group-indicator" style="background-color: ${group.color};"></span>
                             Grupo ${group.groupId}
                         </span>
-                        <span class="ldm-value">${group.ldmValue.toFixed(2)} m</span>
+                        <span class="ldm-value">${ldm} m</span>
                         <button onclick="removeGroupByGroupid(${group.groupId})" class="remove-group-btn">🗑️</button>
                     </div>
                 `;
@@ -208,7 +194,7 @@ function updateLinearMeters() {
     const totalLinearMeters = maxXTotal / 100;
     
     if (totalLdmValueSpan) totalLdmValueSpan.textContent = `${totalLinearMeters.toFixed(2)} m`;
-    if (resultParagraph) resultParagraphs.textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
+    if (resultParagraph) resultParagraph.textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
 }
 
 document.addEventListener('DOMContentLoaded', renderTruck);
