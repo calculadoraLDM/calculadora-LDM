@@ -76,17 +76,17 @@ window.addPallets = function() {
 }
 
 /**
- * **CORRECCIÓN DE COLOCACIÓN:** Lógica de búsqueda estable (priorizando arriba-izquierda).
+ * **COLOCACIÓN CORRECTA:** Busca estricta arriba-izquierda para compactación.
  */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    pallets.forEach(p => p.placed = false); // Reseteamos la colocación
+    pallets.forEach(p => p.placed = false); 
 
     pallets.forEach(p => {
         let placed = false;
         
-        // Búsqueda estricta: X primero, luego Y. Esto garantiza que se apilen correctamente.
+        // Coloca el palet en el primer hueco disponible (X luego Y)
         for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
             for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
                 
@@ -97,12 +97,12 @@ function renderTruck() {
                     p.lastValidX = x_pos;
                     p.lastValidY = y_pos;
                     placed = true;
-                    // Salimos del bucle Y (columna)
+                    // Salimos del bucle Y para priorizar la altura (Y)
                     break; 
                 }
             }
             if (placed) {
-                // Salimos del bucle X (fila) para mantener la colocación compacta a la izquierda.
+                // Salimos del bucle X para mantener el apilamiento a la izquierda (X)
                 break; 
             }
         }
@@ -137,8 +137,7 @@ function renderTruck() {
     updateLinearMeters();
 }
 
-// ... [El resto de funciones (updateLinearMeters, dragStart, dragMove, dragEnd) se mantienen igual ya que contienen la lógica LDM y de colisión estable] ...
-
+// ... [El resto de funciones (updateLinearMeters, dragStart, dragMove, dragEnd) se mantienen estables] ...
 function updateLinearMeters() {
     let maxXTotal = 0;
     
