@@ -1,131 +1,264 @@
-/* --- Diseño Base (Estilo original simple y centrado) --- */
+/* --- Diseño Base (Atractivo y Moderno) --- */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f6; 
+    font-family: 'Roboto', sans-serif; /* Fuente moderna */
+    background-color: #f0f2f5; /* Fondo gris claro suave */
     margin: 0;
     padding: 0;
     text-align: center;
     color: #333;
+    line-height: 1.6;
 }
 
 h1 {
-    font-size: 2.5em;
-    margin-top: 20px;
-    color: #1e3a34; 
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif; /* Fuente destacada para títulos */
+    font-size: 2.8em;
+    margin-top: 30px;
+    color: #2c3e50; /* Gris oscuro elegante */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.08);
+    letter-spacing: 1px;
 }
 
-/* Contenedor del formulario (Centrado) */
+/* Contenedor del formulario */
 .form-container {
     background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto;
+    padding: 25px;
+    border-radius: 12px; /* Bordes más suaves */
+    margin: 30px auto;
     width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid #ddd;
+    max-width: 450px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    border-left: 6px solid #4a90e2; /* Borde de acento azul */
     text-align: left;
 }
 
 .form-container h2 {
-    color: #00796b;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    font-size: 1.3em;
+    font-family: 'Montserrat', sans-serif;
+    color: #4a90e2; /* Azul atractivo */
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0; /* Separador más grueso */
+    padding-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95em;
+}
+
+input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #c9d6de; /* Borde sutil */
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+input[type="number"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+    outline: none;
 }
 
 /* Estilos de botones */
 button {
-    background-color: #ff8f00;
+    background-color: #4a90e2; /* Azul principal */
     color: white;
     border: none;
-    padding: 10px 15px;
-    font-size: 1em;
-    font-weight: bold;
+    padding: 12px 20px;
+    font-size: 1.05em;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    width: calc(50% - 5px);
-    margin-top: 10px;
+    border-radius: 8px; /* Bordes más suaves */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: calc(50% - 10px); /* Ajuste de ancho */
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-button:hover { background-color: #e67c00; }
+button:hover { 
+    background-color: #357bd8; /* Azul más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de "levantar" */
+}
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
 .action-button-secondary {
-    background-color: #9e9e9e;
-    margin-left: 10px;
+    background-color: #95a5a6; /* Gris para acciones secundarias */
+    margin-left: 20px; /* Separación */
 }
-.action-button-secondary:hover { background-color: #757575; }
+.action-button-secondary:hover { background-color: #7f8c8d; }
 
 
 /* --- Resumen de LDM (Encima del Camión) --- */
 .summary-area {
     width: 90%;
     max-width: 884px; /* Ancho del camión a escala 0.65 */
-    margin: 20px auto 10px auto;
+    margin: 30px auto 20px auto;
     background-color: #ffffff;
-    padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #ff8f00; 
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border-top: 6px solid #f39c12; /* Borde de acento naranja */
     text-align: left;
 }
-/* ... [Estilos de h2, total-ldm-label, group-item, etc. del resumen] ... */
-.total-ldm-label {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid #ddd;
-    font-size: 1.3em;
-    font-weight: 700;
-    color: #004d40;
+.summary-area h2 {
+    font-family: 'Montserrat', sans-serif;
+    color: #f39c12; /* Naranja atractivo */
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
 }
-#total-ldm-value { color: #e65100; }
 
-/* --- VISUALIZACIÓN DEL REMOLQUE (CRÍTICO) --- */
+#group-summary {
+    max-height: 200px; /* Limitar altura para scroll si hay muchos grupos */
+    overflow-y: auto;
+    padding-right: 10px; /* Espacio para scrollbar */
+}
+.group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ebebeb; /* Separador más suave */
+}
+.group-item:last-child { border-bottom: none; }
+
+.group-indicator {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+    border: 2px solid rgba(0,0,0,0.1); /* Borde sutil al color */
+}
+.ldm-value {
+    font-weight: 700;
+    color: #2c3e50; /* Texto oscuro para valor LDM */
+    font-size: 1.1em;
+}
+.empty-message {
+    font-style: italic;
+    color: #888;
+    padding: 10px 0;
+}
+
+.total-ldm-label {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+    font-size: 1.8em; /* Más grande para el total */
+    font-weight: 700;
+    color: #2c3e50;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+#total-ldm-value { 
+    color: #e74c3c; /* Rojo para el valor total, destacando */
+    font-size: 1.2em; /* Proporcionalmente más pequeño que la etiqueta */
+}
+
+p#result {
+    margin-top: 15px;
+    font-size: 1.1em;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+
+/* --- VISUALIZACIÓN DEL REMOLQUE --- */
 .truck-container {
-    max-width: 884px; /* 1360 * 0.65 */
-    margin: 20px auto;
+    max-width: 884px; /* Ancho visual: 1360 * 0.65 */
+    margin: 40px auto; /* Más espacio */
     overflow: hidden; 
     padding: 0;
-    height: 159px; /* Altura escalada (244 * 0.65) */
+    height: 159px; /* Altura visual: 244 * 0.65 */
+    border-radius: 12px; /* Bordes suaves */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra envolvente */
+    background-color: #ecf0f1; /* Fondo claro del contenedor */
+    position: relative;
 }
+/* Pequeña "sombra" debajo del camión para dar profundidad */
+.truck-container::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 10%;
+    right: 10%;
+    height: 15px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    filter: blur(8px);
+    z-index: -1;
+}
+
 
 .truck {
     position: relative;
-    /* TAMAÑOS REALES */
-    width: 1360px; 
-    height: 244px; 
+    width: 1360px; /* Ancho real del camión en CM */
+    height: 244px; /* Altura real del camión en CM */
     
-    /* ESCALA ESTABLE PARA VISIBILIDAD */
-    transform: scale(0.65); 
+    transform: scale(0.65); /* Escala para que quepa en pantalla */
     transform-origin: top left;
     
-    margin: 0 auto; 
-    border: 3px solid #333;
-    background-color: #e0e0e0; 
-    border-radius: 4px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0; /* Aseguramos que no haya márgenes internos */
+    border: 3px solid #7f8c8d; /* Borde gris del camión */
+    background-color: #dbe4e6; /* Color del suelo del remolque */
+    border-radius: 6px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
     user-select: none; 
     cursor: default;
-    min-width: 1360px;
 }
 
 /* --- Palets --- */
 .pallet {
     position: absolute;
-    border: 2px solid #263238; 
-    color: #fff;
+    border: 2px solid rgba(0,0,0,0.4); /* Borde más sutil y oscuro */
+    color: white;
     font-size: 14px;
     font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 2px;
+    border-radius: 4px; /* Bordes más suaves en los palets */
     cursor: grab; 
-    transition: box-shadow 0.1s ease-in-out; 
-    opacity: 0.95;
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease; /* Transición para arrastre */
+    opacity: 0.98; /* Un poco más opacos */
     z-index: 1; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra para los palets */
 }
-/* ... [Resto de estilos de palets] ... */
+.pallet:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Sombra más fuerte al pasar el ratón */
+    transform: translateY(-1px); /* Ligero efecto de levantamiento */
+}
+.pallet:active {
+    cursor: grabbing;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4); /* Sombra al arrastrar */
+    transform: scale(1.01); /* Ligeramente más grande al arrastrar */
+    z-index: 10; /* Asegura que el palet arrastrado esté siempre encima */
+}
+
+/* Scrollbar personalizado para el resumen (opcional, para un look más pulido) */
+#group-summary::-webkit-scrollbar {
+    width: 8px;
+}
+#group-summary::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#group-summary::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+#group-summary::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
