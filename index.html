@@ -8,6 +8,17 @@
 </head>
 <body>
     <h1>Simulador de Carga de Camión (LDM)</h1>
+    
+    <div class="summary-fixed" id="summary-fixed">
+        <h2>Resumen de LDM por Grupo</h2>
+        <div id="group-summary">
+            <p class="empty-message">Aún no hay cargas añadidas.</p>
+        </div>
+        <div class="total-ldm-label">
+            LDM Total: <span id="total-ldm-value">0.00 m</span>
+        </div>
+    </div>
+    
     <div class="form-container">
         <h2>Añadir Palets</h2>
         <label for="pallet-width">Ancho del palet (cm):</label>
@@ -22,41 +33,28 @@
         <button onclick="addPallets()">Añadir Palets</button>
     </div>
     
-    <div class="main-content">
-        <div class="truck-column">
+    <div class="truck-center-container">
+        <div class="truck-frame">
+            <div class="tractor-cab"></div> 
             
-            <div class="truck-frame">
-                <div class="tractor-cab"></div> 
-                
-                <div class="truck-container">
-                    <div class="truck" id="truck"></div>
-                </div>
-                
-                <div class="wheels-container">
-                    <div class="wheel wheel-tractor-1"></div>
-                    <div class="wheel wheel-tractor-2"></div>
-                    <div class="wheel wheel-trailer-1"></div>
-                    <div class="wheel wheel-trailer-2"></div>
-                    <div class="wheel wheel-trailer-3"></div>
-                    <div class="wheel wheel-trailer-4"></div>
-                    <div class="wheel wheel-trailer-5"></div>
-                    <div class="wheel wheel-trailer-6"></div>
-                </div>
+            <div class="truck-container">
+                <div class="truck" id="truck"></div>
             </div>
-
-            <p id="result"></p>
-        </div>
-        
-        <div class="summary-column">
-            <h2>Resumen de LDM por Grupo</h2>
-            <div id="group-summary">
-                <p class="empty-message">Aún no hay cargas añadidas.</p>
-            </div>
-            <div class="total-ldm-label">
-                LDM Total: <span id="total-ldm-value">0.00 m</span>
+            
+            <div class="wheels-container">
+                <div class="wheel wheel-tractor-1"></div>
+                <div class="wheel wheel-tractor-2"></div>
+                <div class="wheel wheel-trailer-1"></div>
+                <div class="wheel wheel-trailer-2"></div>
+                <div class="wheel wheel-trailer-3"></div>
+                <div class="wheel wheel-trailer-4"></div>
+                <div class="wheel wheel-trailer-5"></div>
+                <div class="wheel wheel-trailer-6"></div>
             </div>
         </div>
     </div>
+
+    <p id="result"></p>
 
     <script src="script.js"></script>
 </body>
