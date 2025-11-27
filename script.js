@@ -144,9 +144,8 @@ function findBestFitPosition(pallet, tryRotation) {
 }
 
 /**
- * FINAL: Colocación Fila-Primero (Row-First).
- * Prioriza llenar horizontalmente (X) antes de pasar a la siguiente línea (Y), 
- * lo que llena el largo del camión en la fila superior (Y=0) antes de usar la fila Y=120.
+ * Colocación Fila-Primero (Row-First).
+ * Prioriza llenar horizontalmente (X) antes de pasar a la siguiente línea (Y).
  */
 function findFitAtLocation(pW, pL, currentPallet) {
     
