@@ -10,35 +10,21 @@
     <h1>Simulador de Carga de Camión (LDM)</h1>
     
     <div class="form-container">
-        <h2>Entrada de Dimensiones y Cantidad</h2>
-        
-        <div class="form-grid">
-            <div><label for="pallet-width">Ancho del palet (cm):</label><input type="number" id="pallet-width" min="1" required value="80"></div>
-            <div><label for="pallet-length">Largo del palet (cm):</label><input type="number" id="pallet-length" min="1" required value="120"></div>
-            <div><label for="pallet-quantity">Cantidad:</label><input type="number" id="pallet-quantity" min="1" required value="5"></div>
-        </div>
-        
-        <div class="button-group">
-            <button onclick="addPallets()">Añadir Carga</button>
-            <button onclick="clearPallets()" class="action-button-secondary">Limpiar Todo</button>
-        </div>
-    </div>
-    
-    <div class="summary-area">
-        <h2>📊 Resumen de LDM por Grupo</h2>
-        <div id="group-summary">
-            <p class="empty-message">Aún no hay cargas añadidas.</p>
-        </div>
-        <div class="total-ldm-label">
-            LDM Total: <span id="total-ldm-value">0.00 m</span>
-        </div>
+        <h2>Entrada de Palets</h2>
+        <label for="pallet-width">Ancho del palet (cm):</label>
+        <input type="number" id="pallet-width" min="1" required value="80">
+        <label for="pallet-length">Largo del palet (cm):</label>
+        <input type="number" id="pallet-length" min="1" required value="120">
+        <label for="pallet-quantity">Cantidad:</label>
+        <input type="number" id="pallet-quantity" min="1" required value="5">
+        <button onclick="addPallets()">Añadir Palets</button>
+        <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
     </div>
     
     <div class="truck-container">
         <div class="truck" id="truck"></div>
     </div>
-
-    <p id="result" style="display: none;"></p>
+    <p id="result">Metros lineales ocupados: 0.00 m</p>
 
     <script src="script.js"></script>
 </body>
