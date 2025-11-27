@@ -1,13 +1,13 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c']; // Paleta simple
+const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c'];
 let pallets = [];
 let nextPalletId = 0;
 
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
-window.renderTruck = renderTruck; // Hacemos renderTruck global por si acaso
+window.renderTruck = renderTruck;
 
 function clearPallets() {
     pallets = [];
@@ -34,29 +34,22 @@ function addPallets() {
             x: 0, 
             y: 0,
             placed: false,
-            rotated: false // Nuevo estado para la rotación
+            rotated: false 
         });
     }
 
     renderTruck();
 }
 
-/**
- * Función de búsqueda de espacio estable (First Fit)
- * @param {number} pW - El ancho del palet a probar
- * @param {number} pL - El largo del palet a probar
- * @param {object} currentPallet - El objeto palet a colocar
- * @returns {{x: number, y: number}|null}
- */
 function findFit(pW, pL, currentPallet) {
-    // Iteración First-Fit simple y estable (prioriza izquierda/arriba)
+    // Busca el primer hueco disponible (First Fit)
     for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
         for (let x = 0; x <= TRUCK_WIDTH - pL; x++) {
             
             const isColliding = pallets.some(other => {
                 if (!other.placed || other.id === currentPallet.id) return false;
                 
-                // Las dimensiones del otro palet ya están ajustadas por su estado 'rotated'
+                // Las dimensiones del otro palet ya están ajustadas
                 const otherW = other.rotated ? other.length : other.width;
                 const otherL = other.rotated ? other.width : other.length;
 
@@ -76,9 +69,6 @@ function findFit(pW, pL, currentPallet) {
     return null;
 }
 
-/**
- * Colocación automática con optimización de rotación.
- */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
@@ -87,7 +77,7 @@ function renderTruck() {
 
     pallets.forEach(pallet => {
         if (!pallet.placed) {
-            // Intenta orientación original (sin rotar)
+            // Intenta orientación original
             let placement = findFit(pallet.width, pallet.length, pallet);
             let rotated = false;
 
@@ -113,7 +103,6 @@ function renderTruck() {
     let maxX = 0;
     
     pallets.filter(p => p.placed).forEach(pallet => {
-        // Dimensiones basadas en el estado de rotación
         const palletW = pallet.rotated ? pallet.length : pallet.width;
         const palletL = pallet.rotated ? pallet.width : pallet.length;
         
@@ -157,9 +146,9 @@ function toggleRotation(id) {
     pallet.placed = false;
 
     // Comprobar si cabe en la posición actual con la nueva orientación
+    // Buscamos un nuevo lugar (debería ser el mismo si no hay colisión)
     let newPos = findFit(newW, newL, pallet);
 
-    // Si puede rotar y cabe en algún lugar (debería ser su posición actual si no hay colisión)
     if (newPos) {
         pallet.rotated = !pallet.rotated;
         pallet.x = newPos.x;
