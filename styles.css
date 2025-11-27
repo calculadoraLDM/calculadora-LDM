@@ -1,165 +1,121 @@
-/* Estilos generales para un diseño limpio y profesional */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f7; /* Fondo gris muy claro */
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    color: #333;
+/* ... [Mantiene estilos de body, h1, form-container, input, button, result] ... */
+
+/* --- VISUALIZACIÓN PRINCIPAL (Flexbox) --- */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 95%;
+    /* Aumentamos el ancho máximo para la nueva escala (1360 * 0.90 = 1224px) */
+    max-width: 1400px; 
+    margin: 0 auto 30px auto;
+    gap: 20px;
 }
 
-/* Encabezado */
-h1 {
-    font-size: 2.2em;
-    margin-top: 25px;
-    color: #004d40; /* Verde oscuro, profesional */
-    text-transform: uppercase;
+.truck-column {
+    flex-grow: 1;
+    /* Necesita espacio para la cabina */
+    max-width: 1350px; 
 }
 
-/* Contenedor del formulario */
-.form-container {
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 6px;
-    margin: 25px auto;
-    width: 90%;
-    max-width: 450px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #00796b; /* Detalle de color */
-    text-align: left;
+/* --- MARCO EXTERNO Y SILUETA DEL CAMIÓN --- */
+.truck-frame {
+    position: relative;
+    /* Ajustamos el ancho para que la tractora encaje */
+    width: 1550px; 
+    margin: 0 auto;
+    
+    /* ESCALA APLICADA A TODO EL MARCO (Camión y Cabina) */
+    transform: scale(0.90); 
+    transform-origin: top left;
 }
 
-.form-container h2 {
-    color: #00796b;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
-    font-size: 1.3em;
+/* Silueta de la Cabina (Tractora) */
+.tractor-cab {
+    position: absolute;
+    /* Las dimensiones están ajustadas para encajar con el remolque de 244px de alto */
+    width: 190px;
+    height: 300px; 
+    background-color: #e62e2e; /* Rojo de la cabina */
+    left: -195px; /* Colocar a la izquierda del remolque */
+    bottom: -1px; 
+    border-radius: 10px 0 0 10px;
+    border: 3px solid #333;
+    z-index: 5;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para los campos de entrada */
-.form-container label {
-    font-size: 0.9em;
-    margin-top: 10px;
-    margin-bottom: 3px;
-    display: block;
-    font-weight: 600; /* Semi-bold */
+.tractor-cab::after {
+    content: '';
+    position: absolute;
+    background-color: white; /* Ventana */
+    width: 100px;
+    height: 120px;
+    top: 50px;
+    right: 0;
+    border-radius: 0 0 5px 0;
+    border-left: 5px solid #333;
 }
 
-input[type="number"] {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box; 
-    font-size: 1em;
-    background-color: #fff;
-    transition: border-color 0.2s;
-}
 
-input[type="number"]:focus {
-    outline: none;
-    border-color: #00796b;
-    box-shadow: 0 0 0 0.2rem rgba(0, 121, 107, 0.25); /* Sombra tipo bootstrap */
-}
-
-/* Botón */
-button {
-    background-color: #00796b; /* Verde profesional */
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-    width: 100%;
-    margin-top: 10px;
-}
-
-button:hover {
-    background-color: #004d40; 
-}
-
-/* Resultado LDM */
-#result {
-    font-size: 1.4em;
-    margin: 30px auto;
-    font-weight: bold;
-    color: #e65100; /* Naranja para resaltar el valor */
-    padding: 15px;
-    background-color: #fff3e0; /* Fondo claro para el resultado */
-    border-radius: 4px;
-    max-width: 600px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* --- VISUALIZACIÓN DEL CAMIÓN --- */
-
-/* Contenedor que maneja el scroll horizontal si es necesario */
+/* --- CONTENEDOR DE CARGA (REMOLQUE) --- */
 .truck-container {
-    /* Ancho máximo para el camión a escala 0.75 (1360 * 0.75 = 1020px) + margen */
-    max-width: 1050px; 
-    margin: 20px auto;
-    /* ELIMINADO: overflow-x: auto; */
-    overflow: hidden; /* Oculta cualquier barra de desplazamiento */
-    padding: 10px;
+    max-width: 1360px; 
+    margin: 20px auto 0;
+    overflow: hidden; 
+    padding: 10px 0 0 0; /* Ajustamos padding */
 }
 
-/* Contenedor del camión (la 'caja') */
 .truck {
     position: relative;
-    
-    /* TAMAÑOS ORIGINALES (la referencia en cm) */
     width: 1360px; 
     height: 244px; 
     
-    /* ESCALA APLICADA PARA VISUALIZACIÓN */
-    transform: scale(0.75);
-    transform-origin: top left; /* Escalar desde la esquina superior izquierda */
+    /* Quitamos la escala de aquí, ya la aplica .truck-frame */
+    transform: none; 
     
     margin: 0 auto; 
-    
     border: 3px solid #333;
-    background-color: #cfd8dc; /* Fondo de la caja más claro */
+    background-color: #cfd8dc; 
     border-radius: 4px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
     user-select: none; 
     cursor: default;
-    min-width: 1360px; /* Sigue siendo necesario para la escala */
+    min-width: 1360px;
 }
 
-/* Palets */
-.pallet {
+/* --- RUEDAS --- */
+.wheels-container {
     position: absolute;
-    border: 2px solid #263238; /* Borde oscuro y definido */
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 2px;
-    cursor: grab; 
-    transition: box-shadow 0.1s ease-in-out; 
-    opacity: 0.95;
-    z-index: 1; 
+    bottom: -60px; /* Colocación bajo el camión */
+    left: -195px; /* Desde el inicio de la cabina */
+    width: 1550px;
+    height: 50px;
+    z-index: 0;
 }
 
-.pallet:active {
-    cursor: grabbing; 
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Sombra oscura al arrastrar */
-    opacity: 1;
-    z-index: 10;
+.wheel {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #333; /* Color de la goma */
+    border-radius: 50%;
+    border: 5px solid #ccc; /* Borde de la llanta */
 }
 
-/* Animación de entrada */
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 0.95; transform: scale(1); }
-}
-.pallet {
-    animation: fadeIn 0.4s ease-in-out;
-}
+/* Posiciones de las ruedas de la tractora */
+.wheel-tractor-1 { left: 50px; }
+.wheel-tractor-2 { left: 100px; } /* Rueda doble para la tracción */
+
+/* Posiciones de las ruedas del remolque */
+/* Notar que las posiciones son relativas al .truck-frame (ancho total de 1550px) */
+.wheel-trailer-1 { left: 950px; }
+.wheel-trailer-2 { left: 1000px; }
+
+.wheel-trailer-3 { left: 1100px; }
+.wheel-trailer-4 { left: 1150px; }
+
+.wheel-trailer-5 { left: 1250px; }
+.wheel-trailer-6 { left: 1300px; }
+
+/* ... [Mantiene estilos de .summary-column, .pallet, etc.] ... */
