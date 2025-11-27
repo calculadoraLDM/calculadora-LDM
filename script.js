@@ -85,17 +85,11 @@ function isPositionAvailable(x, y, pallet) {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // 1. Recalcular la colocación para TODOS los palets no colocados
+    // 1. Recalcular la colocación para TODOS los palets no colocados (Algoritmo de Prioridad Ancho)
     pallets.filter(p => !p.placed).forEach(p => {
-        
-        // Colocación: Intenta colocar el palet en la primera posición disponible (0,0), 
-        // luego incrementando Y, luego incrementando X.
         let placed = false;
         
-        // Iterar sobre las posiciones posibles (coordenadas x,y de la esquina superior izquierda)
-        // La lógica de búsqueda de espacio es muy simple aquí, podemos mejorarla
-        // con un algoritmo de "Next Fit" o "Best Fit" si es necesario, 
-        // pero por ahora buscamos de izquierda a derecha, de arriba abajo.
+        // Buscar el primer hueco disponible, priorizando el avance en Y (ancho)
         for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
             for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
                 
@@ -106,15 +100,13 @@ function renderTruck() {
                     p.lastValidX = x_pos;
                     p.lastValidY = y_pos;
                     placed = true;
-                    // Romper el bucle interno (y) para priorizar el apilamiento a lo ancho (y)
+                    // Ya que encontramos un lugar, salimos del bucle Y
                     break;
                 }
             }
             if (placed) {
-                // Si encontramos un lugar, salimos del bucle externo (x) 
-                // para que el siguiente palet comience la búsqueda desde (0,0) 
-                // y se fuerce a apilarse a la izquierda.
-                break;
+                // Ya que encontramos un lugar y queremos que los siguientes se apilen a la izquierda, salimos del bucle X
+                break; 
             }
         }
         
@@ -163,7 +155,7 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar (Drag and Drop) (SIN CAMBIOS) ---
+// --- Lógica de Arrastrar y Soltar con Colisión en Movimiento ---
 
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
@@ -196,21 +188,71 @@ function dragMove(e) {
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
 
-    let newX = clientX - currentPallet.offsetX;
-    let newY = clientY - currentPallet.offsetY;
+    let targetX = clientX - currentPallet.offsetX;
+    let targetY = clientY - currentPallet.offsetY;
 
-    // Aplicar límites del camión
-    newX = Math.min(Math.max(0, newX), TRUCK_WIDTH - currentPallet.length);
-    newY = Math.min(Math.max(0, newY), TRUCK_HEIGHT - currentPallet.width);
+    // 1. Aplicar límites del camión
+    targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
+    targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
-    // Actualizar la posición del palet en el DOM
+    // 2. Comprobar y ajustar la colisión con otros palets (Sistema de empuje)
+    pallets.filter(p => p.id !== currentPallet.id && p.placed).forEach(otherPallet => {
+        
+        // Comprobación de colisión
+        const isColliding = (
+            targetX < otherPallet.x + otherPallet.length &&
+            targetX + currentPallet.length > otherPallet.x &&
+            targetY < otherPallet.y + otherPallet.width &&
+            targetY + currentPallet.width > otherPallet.y
+        );
+
+        if (isColliding) {
+            // Calcular la superposición en X y Y
+            const overlapX = Math.min(targetX + currentPallet.length - otherPallet.x, otherPallet.x + otherPallet.length - targetX);
+            const overlapY = Math.min(targetY + currentPallet.width - otherPallet.y, otherPallet.y + otherPallet.width - targetY);
+
+            // Ajustar en la dirección con menor superposición (la más fácil de resolver)
+            if (overlapX < overlapY) {
+                // Colisión horizontal: Ajustar X
+                if (targetX < otherPallet.x) {
+                    // Moviendo a la izquierda, ajustamos a la derecha del palet chocado
+                    targetX = otherPallet.x - currentPallet.length;
+                } else {
+                    // Moviendo a la derecha, ajustamos a la izquierda del palet chocado
+                    targetX = otherPallet.x + otherPallet.length;
+                }
+            } else {
+                // Colisión vertical: Ajustar Y
+                if (targetY < otherPallet.y) {
+                    // Moviendo arriba, ajustamos a la parte inferior del palet chocado
+                    targetY = otherPallet.y - currentPallet.width;
+                } else {
+                    // Moviendo abajo, ajustamos a la parte superior del palet chocado
+                    targetY = otherPallet.y + otherPallet.width;
+                }
+            }
+
+            // Volver a aplicar límites del camión después del ajuste
+            targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
+            targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
+        }
+    });
+
+    // 3. Aplicar la posición final (ajustada por colisión)
+    
+    // Si la nueva posición es igual a la anterior, no hacemos nada (para evitar parpadeos)
+    if (currentPallet.x === targetX && currentPallet.y === targetY) {
+        return; 
+    }
+
+    // Actualizar modelo
+    currentPallet.x = targetX;
+    currentPallet.y = targetY;
+
+    // Actualizar DOM
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
-    palletDiv.style.left = `${newX}px`;
-    palletDiv.style.top = `${newY}px`;
-
-    // Actualizar las coordenadas del palet en el modelo TEMPORALMENTE
-    currentPallet.x = newX;
-    currentPallet.y = newY;
+    palletDiv.style.left = `${targetX}px`;
+    palletDiv.style.top = `${targetY}px`;
 }
 
 function dragEnd() {
@@ -219,23 +261,14 @@ function dragEnd() {
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
     palletDiv.style.zIndex = 1; 
 
-    // Si la nueva posición es válida
-    if (isPositionAvailable(currentPallet.x, currentPallet.y, currentPallet)) {
-        currentPallet.lastValidX = currentPallet.x;
-        currentPallet.lastValidY = currentPallet.y;
-        updateLinearMeters();
-    } else {
-        alert('¡Colisión! Por favor, mueve el palet a un espacio libre.');
-        
-        // Revierte a la última posición válida
-        currentPallet.x = currentPallet.lastValidX; 
-        currentPallet.y = currentPallet.lastValidY;
-        
-        // Forzar al DOM a volver a la posición válida
-        palletDiv.style.left = `${currentPallet.x}px`;
-        palletDiv.style.top = `${currentPallet.y}px`;
-    }
-
+    // Al soltar, la posición ya es válida gracias a dragMove, solo actualizamos los valores fijos
+    
+    // Guardar la posición final como la última posición válida
+    currentPallet.lastValidX = currentPallet.x; 
+    currentPallet.lastValidY = currentPallet.y;
+    
+    updateLinearMeters();
+    
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
     document.removeEventListener('touchmove', dragMove);
