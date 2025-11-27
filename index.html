@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Carga de Camión</title>
+    <title>Calculadora LDM Profesional</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Simulador de Carga de Camión (LDM)</h1>
+    <h1>Cálculo de Metros de Carga (LDM)</h1>
     
     <div class="form-container">
         <h2>📦 Añadir Palets</h2>
@@ -24,21 +24,30 @@
         <button onclick="addPallets()">Añadir Carga</button>
     </div>
     
-    <div class="summary-area">
-        <h2>📊 Resumen de LDM por Grupo</h2>
-        <div id="group-summary">
-            <p class="empty-message">Aún no hay cargas añadidas.</p>
+    <div class="truck-summary-layout">
+        
+        <div class="professional-truck-area">
+            
+            <div class="truck-label-bar">Área de Carga (2.44m x 13.6m)</div>
+            
+            <div class="truck-frame">
+                <div class="tractor-front"></div> <div class="truck-container" id="truck-container">
+                    <div class="truck" id="truck"></div>
+                </div>
+            </div>
+            <p id="result" class="truck-result-label"></p>
         </div>
-        <div class="total-ldm-label">
-            LDM Total: <span id="total-ldm-value">0.00 m</span>
-        </div>
-    </div>
-    
-    <div class="truck-container">
-        <div class="truck" id="truck"></div>
-    </div>
 
-    <p id="result"></p>
+        <div class="summary-area">
+            <h2>📊 LDM por Grupo</h2>
+            <div id="group-summary">
+                <p class="empty-message">Aún no hay cargas añadidas.</p>
+            </div>
+            <div class="total-ldm-label">
+                LDM Total: <span id="total-ldm-value">0.00 m</span>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
