@@ -53,7 +53,7 @@ function addPallets() {
         return;
     }
 
-    if (palletWidth > TRUCK_HEIGHT && palletLength > TRUCK_HEIGHT) { // El palet no cabe ni rotado
+    if (palletWidth > TRUCK_HEIGHT && palletLength > TRUCK_HEIGHT) { 
          alert(`ERROR: El palet (${palletWidth}x${palletLength}) es demasiado ancho. Máximo de ancho del camión: ${TRUCK_HEIGHT}cm.`);
          return;
     }
@@ -77,8 +77,7 @@ function addPallets() {
             x: 0, 
             y: 0,
             placed: false,
-            rotated: false, // Valor inicial de rotación
-            // Variables temporales para arrastre
+            rotated: false, 
             offsetX: 0, 
             offsetY: 0,
             tempX: 0,
@@ -102,14 +101,11 @@ function isPositionAvailable(x, y, pW, pL, currentPallet) {
 
     // 2. Verificación de solapamiento
     return !pallets.some(other => {
-        // Solo verifica contra palets ya colocados y que no sea el mismo
         if (!other.placed || other.id === currentPallet.id) return false;
         
-        // Obtener dimensiones reales del otro palet
         const otherW = other.rotated ? other.length : other.width;
         const otherL = other.rotated ? other.width : other.length;
 
-        // Detección de colisión (separating axis theorem simplificado)
         return (
             x < other.x + otherL &&
             x + pL > other.x &&
@@ -124,7 +120,6 @@ function isPositionAvailable(x, y, pW, pL, currentPallet) {
  */
 function findBestFitPosition(pallet, tryRotation) {
     
-    // Dimensiones en la orientación principal
     const dim1W = pallet.width;
     const dim1L = pallet.length;
     
@@ -134,10 +129,9 @@ function findBestFitPosition(pallet, tryRotation) {
 
     // 2. Intentar orientación rotada si se permite
     if (tryRotation && !bestPlacement) {
-        const dim2W = pallet.length; // width se convierte en length
-        const dim2L = pallet.width;  // length se convierte en width
+        const dim2W = pallet.length;
+        const dim2L = pallet.width;
         
-        // Solo intentar rotar si el palet rotado cabe en el ancho del camión
         if (dim2W <= TRUCK_HEIGHT) {
              pos = findFitAtLocation(dim2W, dim2L, pallet);
              if (pos) {
@@ -166,20 +160,17 @@ function toggleRotation(id) {
     const pallet = pallets.find(p => p.id === id);
     if (!pallet || !pallet.placed) return;
 
-    // Calcular nuevas dimensiones si se rotara
     const newW = pallet.rotated ? pallet.width : pallet.length;
     const newL = pallet.rotated ? pallet.length : pallet.width;
     
-    // Verificación de ancho CRÍTICA
     if (newW > TRUCK_HEIGHT) {
         alert('No se puede rotar. La nueva anchura es mayor que el ancho del remolque.');
         return;
     }
     
     const tempPlaced = pallet.placed;
-    pallet.placed = false; // Temporalmente fuera para verificación de colisión
+    pallet.placed = false; 
 
-    // Intentar encontrar una nueva posición, priorizando la posición actual (pallet.x, pallet.y)
     let newPos = findFitAtLocation(newW, newL, pallet);
 
     if (newPos) {
@@ -191,7 +182,7 @@ function toggleRotation(id) {
         renderTruck(); 
     } else {
         alert('No se puede rotar aquí. La nueva orientación colisiona con otros palets.');
-        pallet.placed = tempPlaced; // Restaurar
+        pallet.placed = tempPlaced; 
     }
 }
 
@@ -200,18 +191,16 @@ function startDrag(e, palletId) {
     if (!currentPallet) return;
 
     e.preventDefault();
-    
-    // Detener la propagación para evitar arrastrar la ventana en navegadores móviles
     e.stopPropagation(); 
     
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', endDrag);
 
-    // Guardar el desplazamiento inicial del ratón
-    currentPallet.offsetX = e.clientX - document.getElementById('truck').getBoundingClientRect().left - currentPallet.x;
-    currentPallet.offsetY = e.clientY - document.getElementById('truck').getBoundingClientRect().top - currentPallet.y;
+    const truckRect = document.getElementById('truck').getBoundingClientRect();
     
-    // Darle mayor prioridad al arrastrar
+    currentPallet.offsetX = e.clientX - truckRect.left - currentPallet.x;
+    currentPallet.offsetY = e.clientY - truckRect.top - currentPallet.y;
+    
     document.getElementById(`pallet-${palletId}`).style.zIndex = 1000;
     document.body.style.cursor = 'grabbing';
 }
@@ -219,27 +208,22 @@ function startDrag(e, palletId) {
 function onDrag(e) {
     if (!currentPallet) return;
 
-    // Obtener las dimensiones del camión para calcular posiciones relativas
     const truckRect = document.getElementById('truck').getBoundingClientRect();
 
-    // Obtener dimensiones actuales del palet
     const pW = currentPallet.rotated ? currentPallet.length : currentPallet.width;
     const pL = currentPallet.rotated ? currentPallet.width : currentPallet.length;
 
-    // Calcular la nueva posición basada en el ratón, el offset y la posición del camión
     let newX = e.clientX - truckRect.left - currentPallet.offsetX;
     let newY = e.clientY - truckRect.top - currentPallet.offsetY;
 
-    // Límite de posición: Asegurar que el palet no salga del camión
+    // Limite de posición
     newX = Math.max(0, Math.min(newX, TRUCK_WIDTH - pL));
     newY = Math.max(0, Math.min(newY, TRUCK_HEIGHT - pW));
 
-    // Actualizar la posición visual (sin cambiar el modelo de datos todavía)
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
     palletDiv.style.left = `${newX}px`;
     palletDiv.style.top = `${newY}px`;
     
-    // Almacenar la posición temporal en el modelo de datos
     currentPallet.tempX = newX;
     currentPallet.tempY = newY;
 }
@@ -253,38 +237,30 @@ function endDrag() {
 
     const palletId = currentPallet.id;
     
-    // Obtener dimensiones actuales del palet
     const pW = currentPallet.rotated ? currentPallet.length : currentPallet.width;
     const pL = currentPallet.rotated ? currentPallet.width : currentPallet.length;
     
-    // Guardar temporalmente el estado para la verificación
     const tempX = currentPallet.tempX || currentPallet.x;
     const tempY = currentPallet.tempY || currentPallet.y;
     
     const tempPlaced = currentPallet.placed;
-    currentPallet.placed = false; // Temporalmente fuera para verificación
+    currentPallet.placed = false; 
 
-    // Verificar si la nueva posición temporal colisiona con otros palets
     const isAvailable = isPositionAvailable(tempX, tempY, pW, pL, currentPallet);
 
     if (isAvailable) {
-        // Colocación válida: Actualizar la posición final
         currentPallet.x = tempX;
         currentPallet.y = tempY;
         currentPallet.placed = tempPlaced;
     } else {
-        // Colisión: Revertir a la posición anterior y avisar
         alert("¡Colisión! No puedes colocar el palet aquí.");
-        currentPallet.placed = tempPlaced; // Restaurar el estado
-        // La posición (x, y) no se actualiza, el renderizado usará la última posición válida.
+        currentPallet.placed = tempPlaced;
     }
     
-    // Restaurar z-index
     document.getElementById(`pallet-${palletId}`).style.zIndex = '';
     
-    // Limpiar el estado de arrastre y re-renderizar para calcular el nuevo LDM
     currentPallet = null;
-    renderTruck(); // Vuelve a renderizar para actualizar el LDM
+    renderTruck();
 }
 
 
@@ -293,13 +269,10 @@ function endDrag() {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // Paso 1: Recalcular la colocación (incluyendo optimización de rotación)
-    // Solo hace el auto-fit inicial si el palet no ha sido colocado (placed: false)
-    // Esto permite que los palets arrastrados (placed: true) permanezcan donde están.
-    
+    // Auto-fit inicial solo para palets que no han sido colocados (placed: false)
     pallets.forEach(pallet => {
         if (!pallet.placed) {
-            let placement = findBestFitPosition(pallet, true); // True: intentar rotación
+            let placement = findBestFitPosition(pallet, true); 
             
             if (placement) {
                 pallet.x = placement.x;
@@ -315,7 +288,6 @@ function renderTruck() {
     let maxX = 0;
     
     pallets.filter(p => p.placed).forEach(pallet => {
-        // Usar las dimensiones correctas (rotadas o no)
         const palletW = pallet.rotated ? pallet.length : pallet.width;
         const palletL = pallet.rotated ? pallet.width : pallet.length;
         
