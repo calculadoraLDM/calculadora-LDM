@@ -21,9 +21,20 @@
         <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
     </div>
     
+    <div class="summary-area">
+        <h2>📊 Resumen de LDM por Grupo</h2>
+        <div id="group-summary">
+            <p class="empty-message">Aún no hay cargas añadidas.</p>
+        </div>
+        <div class="total-ldm-label">
+            LDM Total: <span id="total-ldm-value">0.00 m</span>
+        </div>
+    </div>
+    
     <div class="truck-container">
         <div class="truck" id="truck"></div>
     </div>
+    
     <p id="result">Metros lineales ocupados: 0.00 m</p>
 
     <script src="script.js"></script>
