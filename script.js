@@ -1,6 +1,6 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#ff7043', '#4caf50', '#2196f3', '#ffeb3b', '#9c27b0', '#00bcd4', '#795548', '#ffc107'];
+const COLORS = ['#ff7043', '#4caf50', '#2196f3', '#ffeb3b', '#9c27b0', '#00bcd4', '#795548', '#ffc107', '#424242', '#ad1457']; // Más colores
 let pallets = [];
 let nextPalletId = 0;
 let colorIndex = 0;
@@ -79,17 +79,16 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * Coloca los palets no colocados, priorizando el ancho del camión,
- * y actualiza la visualización y el LDM.
+ * Coloca los palets no colocados, priorizando el ancho del camión.
  */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // 1. Recalcular la colocación para TODOS los palets no colocados (Algoritmo de Prioridad Ancho)
+    // 1. Recalcular la colocación para TODOS los palets no colocados (Algoritmo de Prioridad Ancho/Izquierda)
     pallets.filter(p => !p.placed).forEach(p => {
         let placed = false;
         
-        // Buscar el primer hueco disponible, priorizando el avance en Y (ancho)
+        // Buscar el primer hueco disponible (arriba a la izquierda)
         for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
             for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
                 
@@ -100,12 +99,12 @@ function renderTruck() {
                     p.lastValidX = x_pos;
                     p.lastValidY = y_pos;
                     placed = true;
-                    // Ya que encontramos un lugar, salimos del bucle Y
+                    // Ya que encontramos un lugar, salimos del bucle Y para apilar el siguiente
                     break;
                 }
             }
             if (placed) {
-                // Ya que encontramos un lugar y queremos que los siguientes se apilen a la izquierda, salimos del bucle X
+                // Ya que encontramos un lugar, salimos del bucle X para mantener el apilamiento a la izquierda
                 break; 
             }
         }
@@ -155,7 +154,7 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar con Colisión en Movimiento ---
+// --- Lógica de Arrastrar y Soltar con Colisión en Movimiento (Sistema de Tope) ---
 
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
@@ -195,10 +194,10 @@ function dragMove(e) {
     targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
     targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
-    // 2. Comprobar y ajustar la colisión con otros palets (Sistema de empuje)
+    // 2. Comprobar y ajustar la colisión con otros palets (Sistema de Tope/Pared)
     pallets.filter(p => p.id !== currentPallet.id && p.placed).forEach(otherPallet => {
         
-        // Comprobación de colisión
+        // Comprobación de colisión: Si la nueva posición Causa solapamiento
         const isColliding = (
             targetX < otherPallet.x + otherPallet.length &&
             targetX + currentPallet.length > otherPallet.x &&
@@ -207,32 +206,30 @@ function dragMove(e) {
         );
 
         if (isColliding) {
-            // Calcular la superposición en X y Y
-            const overlapX = Math.min(targetX + currentPallet.length - otherPallet.x, otherPallet.x + otherPallet.length - targetX);
-            const overlapY = Math.min(targetY + currentPallet.width - otherPallet.y, otherPallet.y + otherPallet.width - targetY);
+            // Si hay colisión, ajustamos la posición de destino a la de "tope"
+            
+            // Calculamos el movimiento real que se hizo en este paso
+            const deltaX = targetX - currentPallet.x;
+            const deltaY = targetY - currentPallet.y;
 
-            // Ajustar en la dirección con menor superposición (la más fácil de resolver)
-            if (overlapX < overlapY) {
-                // Colisión horizontal: Ajustar X
-                if (targetX < otherPallet.x) {
-                    // Moviendo a la izquierda, ajustamos a la derecha del palet chocado
-                    targetX = otherPallet.x - currentPallet.length;
-                } else {
-                    // Moviendo a la derecha, ajustamos a la izquierda del palet chocado
-                    targetX = otherPallet.x + otherPallet.length;
+            // Resolvemos la colisión en la dirección del movimiento más fuerte
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Intentando moverse en X
+                if (deltaX > 0) { // Moviéndose a la derecha
+                    targetX = otherPallet.x - currentPallet.length; // Posición de tope a la izquierda del otro
+                } else { // Moviéndose a la izquierda
+                    targetX = otherPallet.x + otherPallet.length; // Posición de tope a la derecha del otro
                 }
             } else {
-                // Colisión vertical: Ajustar Y
-                if (targetY < otherPallet.y) {
-                    // Moviendo arriba, ajustamos a la parte inferior del palet chocado
-                    targetY = otherPallet.y - currentPallet.width;
-                } else {
-                    // Moviendo abajo, ajustamos a la parte superior del palet chocado
-                    targetY = otherPallet.y + otherPallet.width;
+                // Intentando moverse en Y
+                if (deltaY > 0) { // Moviéndose hacia abajo
+                    targetY = otherPallet.y - currentPallet.width; // Posición de tope arriba del otro
+                } else { // Moviéndose hacia arriba
+                    targetY = otherPallet.y + otherPallet.width; // Posición de tope abajo del otro
                 }
             }
-
-            // Volver a aplicar límites del camión después del ajuste
+            
+            // Volvemos a aplicar límites del camión después del ajuste
             targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
             targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
         }
@@ -240,19 +237,17 @@ function dragMove(e) {
 
     // 3. Aplicar la posición final (ajustada por colisión)
     
-    // Si la nueva posición es igual a la anterior, no hacemos nada (para evitar parpadeos)
-    if (currentPallet.x === targetX && currentPallet.y === targetY) {
-        return; 
+    // Si la posición ha cambiado, actualizamos
+    if (currentPallet.x !== targetX || currentPallet.y !== targetY) {
+        // Actualizar modelo
+        currentPallet.x = targetX;
+        currentPallet.y = targetY;
+
+        // Actualizar DOM
+        const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
+        palletDiv.style.left = `${targetX}px`;
+        palletDiv.style.top = `${targetY}px`;
     }
-
-    // Actualizar modelo
-    currentPallet.x = targetX;
-    currentPallet.y = targetY;
-
-    // Actualizar DOM
-    const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
-    palletDiv.style.left = `${targetX}px`;
-    palletDiv.style.top = `${targetY}px`;
 }
 
 function dragEnd() {
@@ -261,9 +256,7 @@ function dragEnd() {
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
     palletDiv.style.zIndex = 1; 
 
-    // Al soltar, la posición ya es válida gracias a dragMove, solo actualizamos los valores fijos
-    
-    // Guardar la posición final como la última posición válida
+    // Al soltar, la posición ya es válida gracias a dragMove
     currentPallet.lastValidX = currentPallet.x; 
     currentPallet.lastValidY = currentPallet.y;
     
