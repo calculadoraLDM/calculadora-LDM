@@ -1,4 +1,4 @@
-/* --- Diseño Básico y Centrado (Mantenido) --- */
+/* --- Estilos de Visibilidad Garantizada (Reducción de Escala) --- */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f7f6;
@@ -7,43 +7,44 @@ body {
     text-align: center;
     color: #333;
 }
-h1 { margin: 20px 0; color: #1e3a34; }
-.form-container { margin: 20px auto; width: 90%; max-width: 450px; background: white; padding: 15px; border-radius: 8px; text-align: left; }
-.form-container h2 { font-size: 1.2em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-/* ... [Estilos de input y button] ... */
+/* ... [Estilos de h1, form-container se mantienen] ... */
 
-/* --- NUEVO: Estilos para la sección de resumen de grupos --- */
-.summary-area {
-    width: 90%;
-    max-width: 1360px; 
-    margin: 20px auto 10px auto;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: left;
-}
-.summary-area h2 { color: #f39c12; font-size: 1.2em; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 0; }
-#group-summary { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 15px 30px; }
-.group-item { display: flex; align-items: center; font-size: 0.9em; }
-.group-indicator { width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; border: 1px solid #333; }
-.ldm-value { font-weight: bold; color: #1e34e5; margin-left: 5px; }
-.total-ldm-label { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 1.1em; font-weight: bold; }
-
-/* --- VISIBILIDAD CRÍTICA DEL CAMIÓN (RECUADRO) --- */
+/* 3. RECUADRO DEL CAMIÓN (Visibilidad Garantizada) */
 .truck-container {
     width: 95%;
-    max-width: 1360px; 
+    max-width: 1400px; 
     margin: 20px auto;
-    overflow-x: auto; 
-    border: 3px solid #333;
-    background-color: #e0e0e0;
-}
-.truck {
+    
+    /* CRÍTICO: Aplicamos la escala al contenedor para que el contenido se reduzca */
+    transform: scale(0.65); 
+    transform-origin: top center; /* Centrar la escala */
+    
+    /* Definimos el tamaño del camión sin scaling */
+    width: 1360px;
+    height: 244px;
+    
+    border: 3px solid #333; /* Borde visible */
+    background-color: #e0e0e0; /* Fondo visible */
+    overflow: hidden; 
     position: relative;
+}
+
+.truck {
+    /* El remolque interno (zona de trabajo) */
+    position: absolute; /* Usamos absoluto para que se mantenga dentro del contenedor escalado */
+    top: 0;
+    left: 0;
     width: 1360px; 
     height: 244px; 
     min-width: 1360px;
     min-height: 244px;
 }
-.pallet { /* ... [Estilos de palets] ... */ }
+
+.pallet {
+    position: absolute;
+    border: 2px solid #333;
+    background-color: #ff7043;
+    color: #fff;
+    font-size: 12px;
+    /* ... [Resto de estilos de palets] ... */
+}
