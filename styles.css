@@ -21,7 +21,7 @@ body {
 .truck-area-container {
     width: 95%; 
     max-width: 1400px; 
-    margin: 20px 0; 
+    margin: 20px auto; 
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -29,28 +29,26 @@ body {
     text-align: left; 
 }
 
-/* El contenedor principal de la visualización (No escalado) */
 .truck-container {
-    max-width: 1360px; /* Ancho real */
+    /* Altura visual escalada (244 * 0.65 = 159px) */
+    height: 159px; 
+    
+    /* Centrado del remolque dentro del contenedor blanco */
     margin: 0 auto; 
+    
+    max-width: 1360px; 
     overflow: hidden; 
-    
-    /* Altura visual escalada */
-    height: 159px; /* 244 * 0.65 */ 
-    
-    /* El contenedor ahora solo define el espacio */
     border-radius: 6px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) inset;
     background-color: #dbe4e6;
 }
 
-/* EL REMOLQUE (donde están los palets) ES EL QUE DEBE ESCALARSE */
 .truck {
     position: relative;
     width: 1360px; 
     height: 244px; 
     
-    /* CORRECCIÓN CRÍTICA: Aplicamos la escala aquí */
+    /* CRÍTICO: Aplicamos la escala aquí */
     transform: scale(0.65); 
     transform-origin: top left;
     
@@ -60,4 +58,5 @@ body {
     user-select: none; 
     cursor: default;
 }
-/* ... [Estilos de Bloque 4 y Palets se mantienen] ... */
+
+/* ... [Resto de estilos de palets y Bloque 4 se mantienen] ... */
