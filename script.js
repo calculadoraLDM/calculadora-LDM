@@ -1,15 +1,20 @@
-const TRUCK_WIDTH = 1360; // 13.6m en cm
-const TRUCK_HEIGHT = 244; // 2.44m en cm
+// --- Definiciones Globales y Constantes ---
+const TRUCK_WIDTH = 1360; // Ancho máximo del camión en cm
+const TRUCK_HEIGHT = 244; // Altura máxima del camión en cm
 const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#1abc9c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
-let pallets = [];
-let nextPalletId = 0;
-let nextGroupId = 1; 
-let colorIndex = 0; 
-let currentPallet = null; 
 
+let pallets = [];       // Array principal de objetos palet
+let nextPalletId = 0;   // Contador global de palets
+let nextGroupId = 1;    // Contador global para agrupar lotes
+let colorIndex = 0;     // Índice para rotar colores de grupo
+let currentPallet = null; // Objeto temporal para el arrastre (si se implementa)
+
+// --- Exposición de Funciones al Ámbito Global (CRÍTICO) ---
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
-window.removeGroupByGroupid = removeGroupByGroupid;
+window.removeGroupByGroupid = removeGroupByGroupid; // Función de eliminación de lotes
+
+// --- Funciones de Utilidad y Control ---
 
 function getNextColor() {
     const color = COLORS[colorIndex % COLORS.length];
@@ -35,15 +40,17 @@ function addPallets() {
     const palletQuantity = parseInt(document.getElementById('pallet-quantity').value);
 
     if (isNaN(palletWidth) || isNaN(palletLength) || isNaN(palletQuantity) || palletQuantity <= 0) {
-        alert('Por favor, introduce valores válidos.');
+        alert('Por favor, introduce valores válidos y positivos.');
         return;
     }
 
+    // 1. Verificación de límites iniciales
     if (palletWidth > TRUCK_HEIGHT || palletLength > TRUCK_WIDTH) {
          alert(`El palet no cabe. Dimensiones máximas del camión: ${TRUCK_WIDTH}cm x ${TRUCK_HEIGHT}cm.`);
          return;
     }
 
+    // 2. Asignación de grupo y color
     const color = getNextColor(); 
     const groupId = nextGroupId++; 
     colorIndex++;
@@ -64,17 +71,26 @@ function addPallets() {
     renderTruck();
 }
 
+/**
+ * **CRÍTICO:** Verifica si la posición está disponible y si respeta los límites del camión.
+ * @param {number} x, y - Coordenadas de prueba
+ * @param {object} pallet - Palet a colocar
+ * @returns {boolean}
+ */
 function isPositionAvailable(x, y, pallet) {
+    // 1. Verificación CRÍTICA de límites
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
         return false;
     }
 
+    // 2. Verificación de solapamiento con otros palets
     return !pallets.some(other => {
         if (!other.placed || other.id === pallet.id) return false;
         
         const otherW = other.width;
         const otherL = other.length;
 
+        // Detección de colisión 2D (Separating Axis Theorem simplificado)
         return (
             x < other.x + otherL &&
             x + pallet.length > other.x &&
@@ -85,7 +101,9 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ * **CRÍTICO:** Implementa la lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ * @param {object} currentPallet - El palet que se intenta colocar.
+ * @returns {{x: number, y: number} | null}
  */
 function findBestFitY(currentPallet) {
     // Buscamos el hueco más a la izquierda (X) y lo más arriba posible (Y)
@@ -99,14 +117,17 @@ function findBestFitY(currentPallet) {
     return null;
 }
 
+// --- Funciones de Renderizado y Actualización ---
+
 function renderTruck() {
     const truck = document.getElementById('truck');
     
+    // 1. Resetear y volver a colocar todos los palets
     pallets.forEach(p => p.placed = false);
 
     pallets.forEach(pallet => {
         if (!pallet.placed) {
-            let placement = findBestFitY(pallet);
+            let placement = findBestFitY(pallet); // Colocación optimizada Y-first
 
             if (placement) {
                 pallet.x = placement.x;
@@ -118,7 +139,7 @@ function renderTruck() {
         }
     });
     
-    // 2. Renderizar la Visualización
+    // 2. Renderizar la Visualización en el DOM
     truck.innerHTML = '';
     let maxX = 0;
     
@@ -128,27 +149,29 @@ function renderTruck() {
         
         const palletDiv = document.createElement('div');
         palletDiv.className = 'pallet';
+        palletDiv.id = `pallet-${pallet.id}`;
         palletDiv.style.backgroundColor = pallet.color; 
         palletDiv.style.width = `${palletL}px`;
         palletDiv.style.height = `${palletW}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
-        palletDiv.textContent = `${pallet.groupId}`; // Mostrar el ID de Grupo
+        palletDiv.textContent = `${pallet.groupId}`; 
+        
+        // Aquí se implementarían los eventos de arrastre si fuera necesario
+        // palletDiv.addEventListener('mousedown', dragStart);
         
         truck.appendChild(palletDiv);
         
         maxX = Math.max(maxX, pallet.x + palletL);
     });
 
-    updateLinearMeters();
+    updateLinearMeters(maxX);
 }
 
-/**
- * Calcula LDM por Grupo y Total.
- */
-function updateLinearMeters() {
-    let maxXTotal = 0;
+function updateLinearMeters(maxX) {
+    let maxXTotal = maxX;
     
+    // 1. Calcular métricas por grupo
     const groups = pallets.reduce((acc, pallet) => {
         if (pallet.placed) {
             const groupKey = pallet.groupId;
@@ -159,12 +182,11 @@ function updateLinearMeters() {
             
             const palletL = pallet.length;
             acc[groupKey].maxX = Math.max(acc[groupKey].maxX, pallet.x + palletL);
-            maxXTotal = Math.max(maxXTotal, pallet.x + palletL);
         }
         return acc;
     }, {});
 
-    // Renderizar resumen LDM
+    // 2. Renderizar resumen LDM
     const groupSummaryDiv = document.getElementById('group-summary');
     const totalLdmValueSpan = document.getElementById('total-ldm-value');
     const resultParagraph = document.getElementById('result');
@@ -191,6 +213,7 @@ function updateLinearMeters() {
         }
     }
     
+    // 3. Actualizar totales
     const totalLinearMeters = maxXTotal / 100;
     
     if (totalLdmValueSpan) totalLdmValueSpan.textContent = `${totalLinearMeters.toFixed(2)} m`;
