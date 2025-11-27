@@ -5,82 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Carga de Camión</title>
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Script de Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6646002621535399" crossorigin="anonymous"></script>
-
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .content-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            margin: 0 auto;
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        .sidebar {
-            width: 15%;
-            min-width: 160px;
-            padding: 10px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
-    <h1>Simulador de Carga de Camión</h1>
-
-    <div class="content-container">
-        <!-- Barra lateral izquierda con anuncio -->
-        <div class="sidebar">
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:160px;height:600px"
-                 data-ad-client="ca-pub-6646002621535399"
-                 data-ad-slot="2258560347"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-
-        <!-- Contenido principal -->
-        <div class="main-content">
-            <div class="form-container">
-                <label for="pallet-width">Ancho del palet (cm):</label>
-                <input type="number" id="pallet-width" min="1" required>
-                <label for="pallet-length">Largo del palet (cm):</label>
-                <input type="number" id="pallet-length" min="1" required>
-                <label for="pallet-quantity">Cantidad:</label>
-                <input type="number" id="pallet-quantity" min="1" required>
-                <button onclick="addPallets()">Añadir Palets</button>
-            </div>
-            <div class="truck" id="truck"></div>
-            <p id="result"></p>
-        </div>
-
-        <!-- Barra lateral derecha con anuncio -->
-        <div class="sidebar">
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:160px;height:600px"
-                 data-ad-client="ca-pub-6646002621535399"
-                 data-ad-slot="2258560347"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
+    <h1>Simulador de Carga de Camión (LDM)</h1>
+    <div class="form-container">
+        <h2>Añadir Palets</h2>
+        <label for="pallet-width">Ancho del palet (cm):</label>
+        <input type="number" id="pallet-width" min="1" required value="80">
+        
+        <label for="pallet-length">Largo del palet (cm):</label>
+        <input type="number" id="pallet-length" min="1" required value="120">
+        
+        <label for="pallet-quantity">Cantidad:</label>
+        <input type="number" id="pallet-quantity" min="1" required value="5">
+        
+        <button onclick="addPallets()">Añadir Palets</button>
     </div>
+    
+    <div class="truck-container">
+        <div class="truck" id="truck"></div>
+    </div>
+    
+    <p id="result"></p>
 
     <script src="script.js"></script>
 </body>
