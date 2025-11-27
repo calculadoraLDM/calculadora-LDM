@@ -1,4 +1,4 @@
-/* --- Variables --- */
+/* --- Variables y Estructura Base --- */
 :root {
     --color-primary: #34495e; 
     --color-accent: #e67e22;  
@@ -6,9 +6,9 @@
     --bg-card: #ffffff;
     --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
     --border-radius: 8px;
+    --truck-bg: #dbe4e6;
 }
 
-/* --- Base y Estructura Principal (Bloques 1, 2, 4) --- */
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--bg-light);
@@ -16,32 +16,14 @@ body {
     padding: 0;
     color: #333;
 }
-.main-wrapper {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 0 20px 30px 20px;
-    text-align: center;
-}
+.main-wrapper { max-width: 1600px; margin: 0 auto; padding: 0 20px 30px 20px; text-align: center; }
 .app-header h1 { margin: 30px 0; color: var(--color-primary); font-size: 2.5em; }
 
-/* Dashboard de Controles (Flexbox) */
-.app-dashboard {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-.control-panel, .metrics-panel {
-    width: 350px;
-    min-width: 300px;
-}
-.visual-panel {
-    max-width: 1360px;
-    margin: 0 auto;
-    width: 98%;
-}
+/* --- Dashboard de Controles (Flexbox) --- */
+.app-dashboard { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+.control-panel, .metrics-panel { width: 350px; min-width: 300px; }
 
-/* --- Estilos Generales de Tarjeta (Bloques 2, 4) --- */
+/* --- Estilos Generales de Tarjeta --- */
 .card-panel {
     background-color: var(--bg-card);
     padding: 20px;
@@ -52,48 +34,48 @@ body {
 }
 h2 { color: var(--color-primary); font-size: 1.3em; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
 
-/* --- Formulario (Bloque 2) --- */
+/* --- Formulario Detallado --- */
 .input-group { margin-bottom: 10px; }
 label { display: block; margin-bottom: 5px; font-weight: 500; }
-input[type="number"] {
-    padding: 8px; border: 1px solid #ccc; border-radius: 4px;
-    width: 95%; box-sizing: border-box;
-}
+input[type="number"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 95%; box-sizing: border-box; }
 .button-group { display: flex; justify-content: space-between; margin-top: 15px; }
-button { background-color: var(--color-primary); color: white; border: none; padding: 10px 15px; font-size: 1em; border-radius: 4px; width: 48%; }
+button { background-color: var(--color-primary); color: white; border: none; padding: 10px 15px; font-size: 1em; border-radius: 4px; width: 48%; transition: background-color 0.2s; }
 .action-button-secondary { background-color: #95a5a6; }
+button:hover { background-color: #2c3e50; }
 
-/* --- Resumen y Métricas (Bloque 4) --- */
-.total-ldm-label { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 1.2em; font-weight: bold; }
-#total-ldm-value { color: var(--color-accent); margin-left: 5px; }
-#group-summary { margin-top: 10px; }
-.group-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px dashed #eee; }
+/* --- Resumen y Métricas Detalladas --- */
+.summary-area { border-left: 5px solid var(--color-accent); }
+.total-ldm-label { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 1.2em; font-weight: bold; display: flex; justify-content: space-between; align-items: baseline; }
+.metric-value { color: var(--color-accent); font-size: 1.5em; }
+#group-summary { margin-top: 10px; max-height: 200px; overflow-y: auto; }
+.group-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #eee; }
 .group-indicator { width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; border: 1px solid #333; }
 .ldm-value { font-weight: 600; color: #555; }
-.remove-group-btn { background: none; border: none; color: #e74c3c; cursor: pointer; }
+.remove-group-btn { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.1em; transition: color 0.2s; }
+.remove-group-btn:hover { color: #c0392b; }
 
 
 /* --- Visualización del Camión (Bloque 3) --- */
+.visual-panel { max-width: 1360px; margin: 0 auto; width: 98%; }
 .visual-title { color: var(--color-primary); font-size: 1.5em; margin-bottom: 10px; }
 .truck-container {
     width: 100%;
     margin: 0 auto;
-    overflow-x: auto; /* Permite scroll horizontal */
+    overflow-x: auto;
     border: 3px solid var(--color-primary);
-    background-color: #dbe4e6;
+    background-color: var(--truck-bg);
     border-radius: 6px;
 }
 .truck {
     position: relative;
-    width: 1360px; /* Tamaño real en cm/px */
+    width: 1360px; 
     height: 244px; 
-    min-width: 1360px; /* CRÍTICO: Garantiza el tamaño base */
+    min-width: 1360px;
     min-height: 244px;
 }
-
 .pallet {
     position: absolute;
-    border: 2px solid #2c3e50;
+    border: 2px solid var(--color-primary);
     color: #fff;
     font-size: 12px;
     display: flex;
@@ -101,5 +83,6 @@ button { background-color: var(--color-primary); color: white; border: none; pad
     align-items: center;
     border-radius: 3px;
     cursor: grab;
+    transition: all 0.1s ease;
 }
-.result-display { font-size: 1.1em; margin-top: 10px; font-weight: bold; color: var(--color-accent); }
+.result-display { font-size: 1.2em; margin-top: 15px; font-weight: bold; color: var(--color-accent); }
