@@ -3,48 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Carga LDM</title>
+    <title>Calculadora de Carga LDM Profesional</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Calculadora LDM Profesional</h1>
-    
-    <div class="main-layout">
+    <div class="main-wrapper">
+        <h1>Simulador de Carga LDM</h1>
         
-        <div class="left-panel">
+        <div class="app-card">
+            
             <div class="form-container">
-                <h2>Entrada de Dimensiones</h2>
+                <h2>1. Definir Carga</h2>
                 <label for="pallet-width">Ancho del palet (cm):</label>
                 <input type="number" id="pallet-width" min="1" required value="80">
                 <label for="pallet-length">Largo del palet (cm):</label>
                 <input type="number" id="pallet-length" min="1" required value="120">
                 <label for="pallet-quantity">Cantidad:</label>
                 <input type="number" id="pallet-quantity" min="1" required value="5">
-                <button onclick="addPallets()">Añadir Palets</button>
-                <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
+                
+                <div class="button-group">
+                    <button onclick="addPallets()">Añadir Palets</button>
+                    <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
+                </div>
             </div>
             
             <div class="summary-area">
-                <h2>Métricas de LDM</h2>
+                <h2>2. Resumen de LDM</h2>
                 <div id="group-summary">
                     <p class="empty-message">Aún no hay cargas añadidas.</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="right-panel">
-            
-            <div class="full-truck-display">
-                <div class="tractor-cab"></div> <div class="truck-container">
-                    <div class="truck" id="truck"></div>
+                <div class="total-ldm-label">
+                    LDM Total: <span id="total-ldm-value" class="total-value-metric">0.00 m</span>
                 </div>
             </div>
-            
-            <p id="result">Metros lineales ocupados: 0.00 m</p>
         </div>
-        
-    </div>
 
+        <div class="truck-display-area">
+            <h3>Visualización del Remolque (Doble Clic para Rotar)</h3>
+            <div class="truck-container">
+                <div class="truck" id="truck"></div>
+            </div>
+            <p id="result" class="result-footer-text">Metros lineales ocupados: 0.00 m</p>
+        </div>
+
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
