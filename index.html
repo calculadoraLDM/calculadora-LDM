@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora LDM Avanzada</title>
+    <title>Calculadora LDM Avanzada - Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="header">
-        <h1>🛠️ Herramienta de Optimización de Carga (LDM)</h1>
+        <h1>📊 Dashboard de Optimización de Carga (LDM)</h1>
     </div>
 
     <div class="app-container">
@@ -16,7 +16,7 @@
         <div class="main-column">
             
             <div class="form-container">
-                <h2>📦 Añadir Palets</h2>
+                <h2>📦 Definir Carga</h2>
                 
                 <label for="pallet-width">Ancho del palet (cm):</label>
                 <input type="number" id="pallet-width" min="1" required value="80">
@@ -28,6 +28,7 @@
                 <input type="number" id="pallet-quantity" min="1" required value="5">
                 
                 <button onclick="addPallets()">Añadir Carga</button>
+                <button onclick="clearPallets()" class="action-button-secondary">Limpiar Todo</button>
             </div>
             
             <div class="professional-truck-area">
@@ -45,15 +46,22 @@
         </div>
 
         <div class="sidebar-column">
-            <h2>📊 LDM por Grupo</h2>
-            <div id="group-summary">
-                <p class="empty-message">Aún no hay cargas añadidas.</p>
-            </div>
-            <div class="total-ldm-label">
-                LDM Total: <span id="total-ldm-value">0.00 m</span>
-            </div>
+            <h2>📈 Métricas de Carga</h2>
             
-            <button class="action-button">Limpiar Carga</button>
+            <div class="metric-card">
+                <span class="metric-value" id="total-ldm-value">0.00 m</span>
+                <span class="metric-label">LDM Total</span>
+            </div>
+
+            <div class="metric-card">
+                <span class="metric-value" id="total-pallets-value">0</span>
+                <span class="metric-label">Palets Colocados</span>
+            </div>
+
+            <h2 style="margin-top: 30px;">📋 LDM por Grupo</h2>
+            <div id="group-summary">
+                <p class="empty-message">Aún no hay cargas.</p>
+            </div>
         </div>
     </div>
 
