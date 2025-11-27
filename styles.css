@@ -1,134 +1,168 @@
-/* Estilos generales */
+/* --- Diseño Base (Minimalista y Funcional) --- */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f6; 
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    background-color: #f8f8f8;
     margin: 0;
     padding: 0;
     text-align: center;
     color: #333;
 }
 
-/* Encabezado */
 h1 {
-    font-size: 2.5em;
-    margin-top: 20px;
-    color: #1e3a34; 
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    text-transform: uppercase;
+    font-size: 2.2em;
+    padding: 20px 0;
+    margin: 0;
+    color: #00796b; /* Verde Teal */
+    border-bottom: 2px solid #eee;
 }
 
-/* Contenedor del formulario (Centrado) */
+h2 {
+    color: #00796b;
+    font-size: 1.2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+/* --- Layout Principal --- */
+.main-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+/* --- Formulario --- */
 .form-container {
     background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid #ddd;
+    padding: 25px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #00796b;
     text-align: left;
 }
 
-/* ... [Resto de estilos del formulario y resultado (#result) sin cambios] ... */
+label {
+    font-size: 0.9em;
+    margin-top: 10px;
+    display: block;
+    font-weight: 600;
+}
 
-/* --- RESUMEN DE CARGAS (POSICIONAMIENTO FIJO) --- */
+input[type="number"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #ff8f00; /* Naranja Acceso */
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #e67c00;
+}
+
+/* --- Resumen de LDM Fijo (Esquina Derecha) --- */
 .summary-fixed {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 280px; 
+    width: 250px;
     background-color: #ffffff;
     padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-top: 5px solid #e65100;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-top: 5px solid #ff8f00;
     z-index: 100;
     text-align: left;
 }
-/* ... [Mantenemos estilos de resumen] ... */
 
+/* ... [Mantenemos estilos de .group-item, .ldm-value, .total-ldm-label, etc.] ... */
 
-/* --- VISUALIZACIÓN DEL CAMIÓN (CENTRAL Y ESCALADO) --- */
-.truck-center-container {
-    /* Contenedor para centrar el marco del camión */
-    /* Ajustamos el ancho máximo para la escala 0.80 (1550 * 0.80 = 1240px) */
-    max-width: 1250px; 
-    margin: 20px auto;
-    overflow: hidden; 
-    padding-bottom: 80px; 
-    text-align: left; /* Aseguramos que la tractora se alinee a la izquierda */
+/* --- Zona de Visualización del Remolque (SOLUCIÓN DE ESCALA) --- */
+.truck-display-area {
+    flex-grow: 1;
+    max-width: 1000px; /* Ancho máximo visible */
+    padding: 0 10px;
 }
 
-.truck-frame {
-    position: relative;
-    width: 1550px; 
-    margin: 0 auto;
-    
-    /* ESCALA REDUCIDA A 0.80 */
-    transform: scale(0.80); 
-    transform-origin: top left;
+.truck-label {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
 }
 
-/* Silueta de la Cabina (Tractora) */
-.tractor-cab {
-    position: absolute;
-    width: 180px;
-    height: 300px; 
-    background-color: #CC0000; 
-    left: -190px; 
-    bottom: -1px; 
-    border-radius: 10px 10px 0 0; 
-    border: 3px solid #000;
-    z-index: 5;
-    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.tractor-cab::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 30px;
-    background-color: #333; 
-    bottom: 0;
-    left: 0;
-    border-radius: 0 0 0 0;
-}
-
-.tractor-cab::after {
-    content: '';
-    position: absolute;
-    background-color: #eee; 
-    width: 100px;
-    height: 120px;
-    top: 30px;
-    right: 0;
-    border-radius: 0 0 5px 5px;
-    border-left: 3px solid #000;
-}
-
-
-/* --- CONTENEDOR DE CARGA (REMOLQUE) --- */
 .truck-container {
-    max-width: 1360px; 
-    margin: 20px auto 0;
-    overflow: hidden; 
-    padding: 10px 0 0 0; 
-    display: inline-block; /* NECESARIO para que la tractora se alinee a su izquierda */
+    /* Usamos proporciones relativas para que se ajuste al ancho */
+    width: 100%; 
+    padding-bottom: 18%; /* Altura relativa (244/1360 ≈ 0.179) para mantener proporción */
+    position: relative;
+    border: 2px solid #333;
+    background-color: #ddd;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
+/* El remolque se estira para cubrir el 100% del contenedor */
 .truck {
-    position: relative;
-    width: 1360px; 
-    height: 244px; 
-    transform: none; 
-    margin: 0 auto; 
-    border: 3px solid #333;
-    background-color: #e0e0e0; 
-    border-radius: 4px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    user-select: none; 
-    cursor: default;
-    min-width: 1360px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* El contenedor de palets es la única zona de carga */
+    margin: 0;
+    border: none;
+    background-color: transparent; 
 }
-/* ... [Mantenemos estilos de ruedas y palets] ... */
+
+.truck-result-label {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e65100;
+}
+
+/* --- Palets (Ajustados a la nueva escala relativa) --- */
+.pallet {
+    position: absolute;
+    /* La posición (left, top) y tamaño (width, height) seguirán siendo en píxeles 
+       en script.js, pero se escalarán visualmente porque su padre (.truck) 
+       está escalado por CSS. */
+    border: 1px solid #333; 
+    border-radius: 2px;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    opacity: 0.9;
+    transition: box-shadow 0.1s;
+    z-index: 1;
+}
+
+.pallet:active {
+    cursor: grabbing;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    opacity: 1;
+    z-index: 10;
+}
