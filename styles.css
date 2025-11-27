@@ -1,55 +1,59 @@
-/* --- Variables --- */
-:root {
-    --color-primary: #34495e; 
-    --color-accent: #e67e22;  
-    --bg-light: #f4f6f9;
-    --bg-card: #ffffff;
-    --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
-}
-
+/* --- Diseño Básico y Centrado --- */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: var(--bg-light);
+    background-color: #f4f7f6;
     margin: 0;
     padding: 0;
+    text-align: center;
     color: #333;
 }
-h1 { font-size: 2.2em; margin: 30px 0 20px 0; color: var(--color-primary); text-align: center; }
-
-/* --- Contenedor Principal (Centrado) --- */
-.main-wrapper {
-    max-width: 1400px;
-    margin: 0 auto; /* CRÍTICO: Centra el wrapper en la página */
-    padding: 0 20px;
-    text-align: center;
+h1 { margin: 20px 0; color: #1e3a34; }
+.form-container { margin: 20px auto; width: 90%; max-width: 450px; background: white; padding: 15px; border-radius: 8px; text-align: left; }
+.form-container h2 { font-size: 1.2em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+label { display: block; margin-top: 5px; }
+input[type="number"] { padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; width: 95%; }
+button { 
+    background-color: #4a90e2; 
+    color: white; border: none; padding: 10px 15px; 
+    font-size: 1em; cursor: pointer; border-radius: 4px;
+    transition: background-color 0.3s;
+    width: 48%; margin-right: 4%;
 }
+.action-button-secondary { background-color: #95a5a6; margin-right: 0; }
+button:hover { background-color: #357bd8; }
 
-/* --- Tarjeta de Controles (Centrado) --- */
-.app-card {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    max-width: 1100px; /* Ancho para la tarjeta de control */
-    margin: 20px auto; /* Centra la tarjeta */
-}
+#result { margin-top: 20px; font-weight: bold; color: #00796b; }
 
-.form-container, .summary-area {
-    background-color: var(--bg-card);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: var(--shadow-soft);
-    text-align: left;
-    width: 48%;
-}
-
-/* --- Visualización del Remolque (Debajo de la Tarjeta) --- */
-.truck-display-area {
+/* --- VISIBILIDAD CRÍTICA DEL CAMIÓN (RECUADRO) --- */
+.truck-container {
+    /* Contenedor que permite scroll si el camión es demasiado ancho */
     width: 95%;
     max-width: 1360px; 
-    margin: 20px auto; /* CRÍTICO: Centra el área de visualización */
-    background-color: var(--bg-card);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: var(--shadow-soft);
+    margin: 20px auto;
+    overflow-x: auto; 
+    border: 3px solid #333; /* Borde visible */
+    background-color: #e0e0e0; /* Fondo visible */
 }
-/* ... [El resto de estilos de elementos internos (truck, pallet, botones) se mantienen] ... */
+
+.truck {
+    /* El remolque interno (zona de trabajo) */
+    position: relative;
+    width: 1360px; 
+    height: 244px; 
+    min-width: 1360px;
+    min-height: 244px;
+}
+
+.pallet {
+    position: absolute;
+    border: 2px solid #333;
+    background-color: #ff7043;
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    cursor: grab; 
+    transition: all 0.2s ease;
+}
