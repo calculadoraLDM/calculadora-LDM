@@ -1,33 +1,166 @@
-/* ... [Estilos generales anteriores] ... */
+/* Estilos generales para un diseño limpio y profesional */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f7; /* Fondo gris muy claro */
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #333;
+}
 
-/* Contenedor del camión para centrar y aplicar la escala */
+/* Encabezado */
+h1 {
+    font-size: 2.2em;
+    margin-top: 25px;
+    color: #004d40; /* Verde oscuro, profesional */
+    text-transform: uppercase;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 6px;
+    margin: 25px auto;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #00796b; /* Detalle de color */
+    text-align: left;
+}
+
+.form-container h2 {
+    color: #00796b;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+/* Estilo para los campos de entrada */
+.form-container label {
+    font-size: 0.9em;
+    margin-top: 10px;
+    margin-bottom: 3px;
+    display: block;
+    font-weight: 600; /* Semi-bold */
+}
+
+input[type="number"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box; 
+    font-size: 1em;
+    background-color: #fff;
+    transition: border-color 0.2s;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #00796b;
+    box-shadow: 0 0 0 0.2rem rgba(0, 121, 107, 0.25); /* Sombra tipo bootstrap */
+}
+
+/* Botón */
+button {
+    background-color: #00796b; /* Verde profesional */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #004d40; 
+}
+
+/* Resultado LDM */
+#result {
+    font-size: 1.4em;
+    margin: 30px auto;
+    font-weight: bold;
+    color: #e65100; /* Naranja para resaltar el valor */
+    padding: 15px;
+    background-color: #fff3e0; /* Fondo claro para el resultado */
+    border-radius: 4px;
+    max-width: 600px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- VISUALIZACIÓN DEL CAMIÓN --- */
+
+/* Contenedor que maneja el scroll horizontal si es necesario */
 .truck-container {
-    /* Reducimos el ancho máximo para la nueva escala */
-    max-width: 884px; /* 1360 * 0.65 */ 
+    /* Ancho máximo para el camión a escala 0.75 (1360 * 0.75 = 1020px) + margen */
+    max-width: 1050px; 
     margin: 20px auto;
-    overflow-x: auto; 
-    transform-origin: center top; 
+    overflow-x: auto; /* Permite scroll horizontal */
+    padding: 10px;
 }
 
 /* Contenedor del camión (la 'caja') */
 .truck {
     position: relative;
     
-    /* TAMAÑOS ORIGINALES */
+    /* TAMAÑOS ORIGINALES (la referencia en cm) */
     width: 1360px; 
     height: 244px; 
     
-    /* APLICAMOS ESCALA DEL 65% */
-    transform: scale(0.65);
+    /* ESCALA APLICADA PARA VISUALIZACIÓN */
+    transform: scale(0.75);
     transform-origin: top left; /* Escalar desde la esquina superior izquierda */
     
-    margin: 0 auto;
-    border: 5px solid #333;
-    background-color: #b0bec5; 
-    border-radius: 5px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Alinear al centro si el contenedor es más grande (necesita ser ancho total + escala) */
+    /* Para que se centre bien, el ancho del truck debe ser el ancho original */
+    margin: 0 auto; 
+    
+    border: 3px solid #333;
+    background-color: #cfd8dc; /* Fondo de la caja más claro */
+    border-radius: 4px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
     user-select: none; 
     cursor: default;
+    min-width: 1360px; /* Asegura que el scroll aparezca si es necesario */
 }
 
-/* ... [Resto de estilos sin cambios] ... */
+/* Palets */
+.pallet {
+    position: absolute;
+    border: 2px solid #263238; /* Borde oscuro y definido */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    cursor: grab; 
+    transition: box-shadow 0.1s ease-in-out; 
+    opacity: 0.95;
+    z-index: 1; 
+}
+
+.pallet:active {
+    cursor: grabbing; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Sombra oscura al arrastrar */
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Animación de entrada (puede mantenerse, es profesional) */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 0.95; transform: scale(1); }
+}
+.pallet {
+    animation: fadeIn 0.4s ease-in-out;
+}
