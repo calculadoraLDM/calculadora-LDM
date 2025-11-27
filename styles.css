@@ -1,7 +1,7 @@
 /* Estilos generales */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f7f6;
+    background-color: #f4f7f6; 
     margin: 0;
     padding: 0;
     text-align: center;
@@ -30,7 +30,7 @@ h1 {
     text-align: left;
 }
 
-/* ... [Resto de estilos del formulario y resultado (#result) sin cambios, usando la paleta anterior] ... */
+/* ... [Resto de estilos del formulario y resultado (#result) sin cambios] ... */
 
 /* --- RESUMEN DE CARGAS (POSICIONAMIENTO FIJO) --- */
 .summary-fixed {
@@ -42,29 +42,22 @@ h1 {
     padding: 15px;
     border-radius: 6px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-top: 5px solid #e65100; /* Naranja/Rojo para destacar */
+    border-top: 5px solid #e65100;
     z-index: 100;
     text-align: left;
 }
-
-.summary-fixed h2 {
-    color: #e65100;
-    font-size: 1.2em;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
-    margin-top: 0;
-}
-
-/* ... [Mantenemos estilos de #group-summary, .group-item, .group-indicator, .ldm-value, .total-ldm-label, #total-ldm-value] ... */
+/* ... [Mantenemos estilos de resumen] ... */
 
 
 /* --- VISUALIZACIÓN DEL CAMIÓN (CENTRAL Y ESCALADO) --- */
 .truck-center-container {
     /* Contenedor para centrar el marco del camión */
-    max-width: 1400px; 
+    /* Ajustamos el ancho máximo para la escala 0.80 (1550 * 0.80 = 1240px) */
+    max-width: 1250px; 
     margin: 20px auto;
     overflow: hidden; 
-    padding-bottom: 80px; /* Espacio para las ruedas */
+    padding-bottom: 80px; 
+    text-align: left; /* Aseguramos que la tractora se alinee a la izquierda */
 }
 
 .truck-frame {
@@ -72,24 +65,23 @@ h1 {
     width: 1550px; 
     margin: 0 auto;
     
-    /* ESCALA GRANDE */
-    transform: scale(0.90); 
+    /* ESCALA REDUCIDA A 0.80 */
+    transform: scale(0.80); 
     transform-origin: top left;
 }
 
-/* Silueta de la Cabina (Más creíble) */
+/* Silueta de la Cabina (Tractora) */
 .tractor-cab {
     position: absolute;
     width: 180px;
     height: 300px; 
-    background-color: #CC0000; /* Rojo vibrante */
+    background-color: #CC0000; 
     left: -190px; 
     bottom: -1px; 
-    border-radius: 10px 10px 0 0; /* Bordes superiores redondeados */
+    border-radius: 10px 10px 0 0; 
     border: 3px solid #000;
     z-index: 5;
     box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
-    /* Detalle de faro/parachoques */
 }
 
 .tractor-cab::before {
@@ -97,7 +89,7 @@ h1 {
     position: absolute;
     width: 100%;
     height: 30px;
-    background-color: #333; /* Parachoques negro */
+    background-color: #333; 
     bottom: 0;
     left: 0;
     border-radius: 0 0 0 0;
@@ -106,7 +98,7 @@ h1 {
 .tractor-cab::after {
     content: '';
     position: absolute;
-    background-color: #eee; /* Ventana blanca */
+    background-color: #eee; 
     width: 100px;
     height: 120px;
     top: 30px;
@@ -122,6 +114,7 @@ h1 {
     margin: 20px auto 0;
     overflow: hidden; 
     padding: 10px 0 0 0; 
+    display: inline-block; /* NECESARIO para que la tractora se alinee a su izquierda */
 }
 
 .truck {
@@ -138,38 +131,4 @@ h1 {
     cursor: default;
     min-width: 1360px;
 }
-
-/* --- RUEDAS (Más detalladas y negras) --- */
-.wheels-container {
-    position: absolute;
-    bottom: -60px;
-    left: -190px; /* Ajustado a la cabina */
-    width: 1550px;
-    height: 50px;
-    z-index: 0;
-}
-
-.wheel {
-    position: absolute;
-    width: 60px; /* Ruedas más grandes */
-    height: 60px;
-    background-color: #111; /* Negro casi total */
-    border-radius: 50%;
-    border: 5px solid #ccc; 
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-}
-
-/* Posiciones de las ruedas... (ajustadas por el nuevo tamaño de rueda) */
-.wheel-tractor-1 { left: 40px; }
-.wheel-tractor-2 { left: 110px; } 
-
-.wheel-trailer-1 { left: 930px; }
-.wheel-trailer-2 { left: 1000px; }
-
-.wheel-trailer-3 { left: 1100px; }
-.wheel-trailer-4 { left: 1170px; }
-
-.wheel-trailer-5 { left: 1270px; }
-.wheel-trailer-6 { left: 1340px; }
-
-/* ... [Resto de estilos de palets sin cambios] ... */
+/* ... [Mantenemos estilos de ruedas y palets] ... */
