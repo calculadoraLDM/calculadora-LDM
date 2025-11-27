@@ -17,7 +17,7 @@ function getNextColor() {
 }
 
 /**
- * Añade un grupo de palets.
+ * Añade un grupo de palets al modelo de datos.
  */
 function addPallets() {
     const palletWidth = parseInt(document.getElementById('pallet-width').value);
@@ -56,7 +56,7 @@ function addPallets() {
 }
 
 /**
- * Verifica si una posición (x, y) es válida para un palet.
+ * Verifica si una posición (x, y) es válida para un palet (dentro de límites y sin solapamiento).
  */
 function isPositionAvailable(x, y, pallet) {
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
@@ -76,11 +76,12 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * Coloca los palets no colocados, priorizando el ancho del camión.
+ * Coloca los palets no colocados (Algoritmo de Prioridad Ancho/Izquierda).
  */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
+    // Recalcular la colocación para palets NO colocados
     pallets.filter(p => !p.placed).forEach(p => {
         let placed = false;
         
@@ -103,11 +104,12 @@ function renderTruck() {
         }
         
         if (!placed) {
-            console.warn(`Palet ${p.id} no cabe en el camión.`);
+            console.warn(`Palet ${p.id} no cabe en la colocación automática.`);
             p.placed = false; 
         }
     });
     
+    // Renderizar la Visualización
     truck.innerHTML = '';
     
     pallets.filter(p => p.placed).forEach(pallet => {
@@ -117,7 +119,6 @@ function renderTruck() {
         
         palletDiv.style.backgroundColor = pallet.color;
         
-        // Se usan los valores absolutos (cm) para posicionar
         palletDiv.style.width = `${pallet.length}px`;
         palletDiv.style.height = `${pallet.width}px`;
         palletDiv.style.left = `${pallet.x}px`;
@@ -151,13 +152,16 @@ function updateLinearMeters() {
                 };
             }
             
+            // LDM por grupo: Posición más lejana alcanzada por cualquier palet de ese grupo
             acc[groupKey].maxX = Math.max(acc[groupKey].maxX, pallet.x + pallet.length);
             
+            // LDM Total: Posición más lejana de todos los palets
             maxXTotal = Math.max(maxXTotal, pallet.x + pallet.length);
         }
         return acc;
     }, {});
 
+    // Renderizar la lista de grupos
     const groupSummaryDiv = document.getElementById('group-summary');
     const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
@@ -184,7 +188,7 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar con Colisión en Movimiento (CORREGIDA Y ESTRICTA) ---
+// --- Lógica de Arrastrar y Soltar con Colisión de Tope ---
 
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
@@ -220,7 +224,7 @@ function dragMove(e) {
     let targetX = clientX - currentPallet.offsetX;
     let targetY = clientY - currentPallet.offsetY;
 
-    // 1. Aplicar límites del camión (INICIALMENTE)
+    // 1. Aplicar límites del camión (Inicialmente)
     targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
     targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
@@ -238,21 +242,22 @@ function dragMove(e) {
             const deltaX = targetX - currentPallet.x;
             const deltaY = targetY - currentPallet.y;
 
+            // Resolver en la dirección con mayor componente de movimiento
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX > 0) { 
+                if (deltaX > 0) { // Movimiento a la derecha
                     targetX = otherPallet.x - currentPallet.length; 
-                } else { 
+                } else { // Movimiento a la izquierda
                     targetX = otherPallet.x + otherPallet.length; 
                 }
             } else {
-                if (deltaY > 0) { 
+                if (deltaY > 0) { // Movimiento hacia abajo
                     targetY = otherPallet.y - currentPallet.width; 
-                } else { 
+                } else { // Movimiento hacia arriba
                     targetY = otherPallet.y + otherPallet.width; 
                 }
             }
             
-            // 3. RE-APLICAR los límites del camión después de resolver la colisión
+            // 3. RE-APLICAR los límites del camión (Corrección de límite estricta)
             targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
             targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
         }
@@ -275,6 +280,7 @@ function dragEnd() {
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
     palletDiv.style.zIndex = 1; 
 
+    // Guardar la posición final (que ya es válida)
     currentPallet.lastValidX = currentPallet.x; 
     currentPallet.lastValidY = currentPallet.y;
     
@@ -288,6 +294,3 @@ function dragEnd() {
 }
 
 document.addEventListener('DOMContentLoaded', renderTruck);
-
-// Aquí está el código JS completo y final:
-// [CÓDIGO COMPLETO DE script.js A CONTINUACIÓN]
