@@ -1,87 +1,68 @@
-/* --- Diseño Base y Centrado --- */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5; 
+    background-color: #f4f7f6;
     margin: 0;
     padding: 0;
-    text-align: center; 
+    text-align: center;
     color: #333;
-    padding-bottom: 70px; 
 }
-.main-centered-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    width: 100%;
-}
+
 h1 { margin: 20px 0; color: #1e3a34; }
 
-/* 2. FORMULARIO */
 .form-container {
     background-color: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    margin: 30px auto 20px auto; 
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px auto;
     width: 90%;
-    max-width: 800px; 
+    max-width: 450px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-top: 5px solid #4a90e2; 
     text-align: left;
 }
-.form-container h2 { color: #4a90e2; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; font-size: 1.5em; font-weight: 600; }
-.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
-.button-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-button { background-color: #4a90e2; color: white; border: none; padding: 12px 20px; font-size: 1em; font-weight: 600; cursor: pointer; border-radius: 8px; width: auto; }
-.action-button-secondary { background-color: #95a5a6; }
-/* ... [Estilos de input y labels] ... */
+.form-container h2 { font-size: 1.2em; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+label { display: block; margin-top: 5px; }
+input[type="number"] { padding: 5px; margin-bottom: 10px; border: 1px solid #ccc; width: 95%; }
+button { 
+    background-color: #4a90e2; 
+    color: white; border: none; padding: 10px 15px; 
+    font-size: 1em; cursor: pointer; border-radius: 4px;
+    transition: background-color 0.3s;
+    width: 48%; margin-right: 4%;
+}
+.action-button-secondary { background-color: #95a5a6; margin-right: 0; }
+button:hover { background-color: #357bd8; }
 
+#result { margin-top: 20px; font-weight: bold; color: #00796b; }
 
-/* 3. RECTÁNGULO DEL CAMIÓN (Visible y Centrado) */
+/* --- VISIBILIDAD CRÍTICA DEL CAMIÓN (RECUADRO) --- */
 .truck-container {
-    width: 95%; 
-    max-width: 1400px; 
-    margin: 20px auto; 
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    
-    /* Centrado del remolque interno */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    /* Contenedor que permite scroll si el camión es demasiado ancho */
+    width: 95%;
+    max-width: 1360px; 
+    margin: 20px auto;
+    overflow-x: auto; 
+    border: 2px solid #333;
+    background-color: #e0e0e0;
 }
 
 .truck {
-    /* El remolque interno, que contiene los palets */
+    /* El remolque interno (zona de trabajo) */
     position: relative;
     width: 1360px; 
     height: 244px; 
-    min-width: 1360px;
+    min-width: 1360px; /* Garantiza el tamaño real */
     min-height: 244px;
-    
-    /* Aplicamos la escala aquí para la visualización */
-    transform: scale(0.65);
-    transform-origin: center center;
-    
-    border: 3px solid #7f8c8d; 
-    background-color: #ecf0f1; 
 }
-.pallet { position: absolute; border: 2px solid #333; color: #fff; font-size: 12px; display: flex; justify-content: center; align-items: center; border-radius: 3px; }
 
-
-/* 4. Resumen de Cargas */
-.summary-area {
-    width: 90%;
-    max-width: 1400px; 
-    margin: 20px auto 10px auto;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #ff8f00; 
-    text-align: left;
+.pallet {
+    position: absolute;
+    border: 2px solid #333;
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    cursor: pointer; 
+    transition: all 0.2s ease;
 }
-.summary-area h2 { color: #ff8f00; }
-/* ... [Estilos de resumen de LDM] ... */
