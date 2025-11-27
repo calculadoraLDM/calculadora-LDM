@@ -1,18 +1,45 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c'];
+const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e74c3c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
 let pallets = [];
 let nextPalletId = 0;
+let nextGroupId = 1; 
+let colorIndex = 0;
+let currentPallet = null; 
 
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
-window.renderTruck = renderTruck;
+
+function getNextColor() {
+    const color = COLORS[colorIndex % COLORS.length];
+    colorIndex++;
+    return color;
+}
 
 function clearPallets() {
     pallets = [];
     nextPalletId = 0;
+    nextGroupId = 1; 
+    colorIndex = 0;
     renderTruck();
+}
+
+function isPositionAvailable(x, y, pallet) {
+    if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
+        return false;
+    }
+
+    return !pallets.some(pos => {
+        if (!pos.placed || pos.id === pallet.id) return false;
+
+        return (
+            x < pos.x + pos.length &&
+            x + pallet.length > pos.x &&
+            y < pos.y + pos.width &&
+            y + pallet.width > pos.y
+        );
+    });
 }
 
 function addPallets() {
@@ -24,145 +51,200 @@ function addPallets() {
         alert('Por favor, introduce valores válidos.');
         return;
     }
+    
+    if (palletWidth > TRUCK_HEIGHT || palletLength > TRUCK_WIDTH) {
+         alert(`El palet no cabe. Dimensiones máximas del camión: ${TRUCK_WIDTH}cm x ${TRUCK_HEIGHT}cm.`);
+         return;
+    }
+
+    const color = getNextColor();
+    const groupId = nextGroupId++;
 
     for (let i = 0; i < palletQuantity; i++) {
         pallets.push({
             id: nextPalletId++,
+            groupId: groupId,
             width: palletWidth,
             length: palletLength,
-            color: COLORS[nextPalletId % COLORS.length],
+            color: color,
             x: 0, 
             y: 0,
             placed: false,
-            rotated: false 
+            lastValidX: 0, 
+            lastValidY: 0
         });
     }
 
     renderTruck();
 }
 
-function findFit(pW, pL, currentPallet) {
-    // Busca el primer hueco disponible (First Fit)
-    for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
-        for (let x = 0; x <= TRUCK_WIDTH - pL; x++) {
-            
-            const isColliding = pallets.some(other => {
-                if (!other.placed || other.id === currentPallet.id) return false;
-                
-                // Las dimensiones del otro palet ya están ajustadas
-                const otherW = other.rotated ? other.length : other.width;
-                const otherL = other.rotated ? other.width : other.length;
-
-                return (
-                    x < other.x + otherL &&
-                    x + pL > other.x &&
-                    y < other.y + otherW &&
-                    y + pW > other.y
-                );
-            });
-
-            if (!isColliding) {
-                return { x, y }; // Primer hueco encontrado
-            }
-        }
-    }
-    return null;
-}
-
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // 1. Reiniciar la colocación y recolocar todos los palets
-    pallets.forEach(p => p.placed = false);
+    pallets.forEach(p => p.placed = false); 
 
-    pallets.forEach(pallet => {
-        if (!pallet.placed) {
-            // Intenta orientación original
-            let placement = findFit(pallet.width, pallet.length, pallet);
-            let rotated = false;
-
-            // Si no cabe, intenta orientación rotada
-            if (!placement) {
-                placement = findFit(pallet.length, pallet.width, pallet);
-                rotated = true;
+    pallets.forEach(p => {
+        let placed = false;
+        
+        // Colocación First Fit (Prioridad Arriba/Izquierda)
+        for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
+            for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
+                
+                if (isPositionAvailable(x_pos, y_pos, p)) {
+                    p.x = x_pos;
+                    p.y = y_pos;
+                    p.placed = true;
+                    p.lastValidX = x_pos;
+                    p.lastValidY = y_pos;
+                    placed = true;
+                    break; 
+                }
             }
-            
-            if (placement) {
-                pallet.x = placement.x;
-                pallet.y = placement.y;
-                pallet.rotated = rotated;
-                pallet.placed = true;
-            } else {
-                console.warn(`Palet ${pallet.id} no pudo ser colocado.`);
+            if (placed) {
+                break; 
             }
+        }
+        
+        if (!placed) {
+            console.warn(`Palet ${p.id} no cabe en la colocación automática.`);
+            p.placed = false; 
         }
     });
     
     // 2. Renderizar la Visualización
     truck.innerHTML = '';
-    let maxX = 0;
     
     pallets.filter(p => p.placed).forEach(pallet => {
-        const palletW = pallet.rotated ? pallet.length : pallet.width;
-        const palletL = pallet.rotated ? pallet.width : pallet.length;
-        
         const palletDiv = document.createElement('div');
         palletDiv.className = 'pallet';
         palletDiv.id = `pallet-${pallet.id}`;
         
         palletDiv.style.backgroundColor = pallet.color;
-        palletDiv.style.width = `${palletL}px`;
-        palletDiv.style.height = `${palletW}px`;
+        palletDiv.style.width = `${pallet.length}px`;
+        palletDiv.style.height = `${pallet.width}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
         palletDiv.textContent = `${pallet.id + 1}`;
         
-        // Manejador de doble clic para la rotación
-        palletDiv.addEventListener('dblclick', () => toggleRotation(pallet.id));
+        // Añadir lógica de arrastre (y doble clic si la implementamos)
+        palletDiv.addEventListener('mousedown', dragStart);
+        palletDiv.addEventListener('touchstart', dragStart, { passive: false });
         
         truck.appendChild(palletDiv);
-        
-        maxX = Math.max(maxX, pallet.x + palletL);
     });
 
-    // 3. Actualizar LDM
-    const totalLinearMeters = maxX / 100;
+    updateLinearMeters();
+}
+
+function updateLinearMeters() {
+    let maxXTotal = 0;
+    
+    const groups = pallets.reduce((acc, pallet) => {
+        if (pallet.placed) {
+            const groupKey = pallet.groupId;
+            
+            if (!acc[groupKey]) {
+                acc[groupKey] = { groupId: groupKey, color: pallet.color, maxX: 0 };
+            }
+            
+            acc[groupKey].maxX = Math.max(acc[groupKey].maxX, pallet.x + pallet.length);
+            maxXTotal = Math.max(maxXTotal, pallet.x + pallet.length);
+        }
+        return acc;
+    }, {});
+
+    // Renderizar resumen (usando la lógica más reciente)
+    const groupSummaryDiv = document.getElementById('group-summary');
+    const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
+    
+    if (groupList.length === 0) {
+        groupSummaryDiv.innerHTML = '<p class="empty-message">Aún no hay cargas añadidas.</p>';
+    } else {
+        groupSummaryDiv.innerHTML = groupList.map(group => {
+            const ldm = (group.maxX / 100).toFixed(2);
+            return `<div class="group-item"><span><span class="group-indicator" style="background-color: ${group.color};"></span>Grupo ${group.groupId}</span><span class="ldm-value">${ldm} m</span></div>`;
+        }).join('');
+    }
+    
+    const totalLinearMeters = maxXTotal / 100;
+    document.getElementById('total-ldm-value').textContent = `${totalLinearMeters.toFixed(2)} m`;
     document.getElementById('result').textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
 }
 
-/**
- * Permite al usuario rotar un palet con doble clic.
- */
-function toggleRotation(id) {
-    const pallet = pallets.find(p => p.id === id);
-    if (!pallet || !pallet.placed) return;
+// Lógica de Arrastre (dragStart, dragMove, dragEnd) - Mantenida por ser estable.
 
-    // Calcular nuevas dimensiones si se rotara
-    const newW = pallet.rotated ? pallet.width : pallet.length;
-    const newL = pallet.rotated ? pallet.length : pallet.width;
-    
-    // Temporalmente quitamos el palet del conteo para verificar su nuevo espacio
-    const tempPlaced = pallet.placed;
-    pallet.placed = false;
+function dragStart(e) {
+    if (e.type === 'touchstart') e.preventDefault(); 
+    const palletDiv = e.target;
+    const id = parseInt(palletDiv.id.replace('pallet-', ''));
+    currentPallet = pallets.find(p => p.id === id);
+    if (!currentPallet) return;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    currentPallet.offsetX = clientX - currentPallet.x;
+    currentPallet.offsetY = clientY - currentPallet.y;
+    palletDiv.style.zIndex = 10;
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('touchmove', dragMove, { passive: false });
+    document.addEventListener('touchend', dragEnd);
+}
 
-    // Comprobar si cabe en la posición actual con la nueva orientación
-    // Buscamos un nuevo lugar (debería ser el mismo si no hay colisión)
-    let newPos = findFit(newW, newL, pallet);
+function dragMove(e) {
+    if (!currentPallet) return;
+    if (e.type === 'touchmove') e.preventDefault();
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    let targetX = clientX - currentPallet.offsetX;
+    let targetY = clientY - currentPallet.offsetY;
+    // 1. Aplicar límites del camión (Inicialmente)
+    targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
+    targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
-    if (newPos) {
-        pallet.rotated = !pallet.rotated;
-        pallet.x = newPos.x;
-        pallet.y = newPos.y;
-        
-        // Llamar a renderTruck para aplicar el cambio y recalcular el LDM
-        pallet.placed = tempPlaced;
-        renderTruck(); 
-    } else {
-        alert('No se puede rotar aquí. No cabe o choca con otro palet en la nueva orientación.');
+    pallets.filter(p => p.id !== currentPallet.id && p.placed).forEach(otherPallet => {
+        const isColliding = (
+            targetX < otherPallet.x + otherPallet.length &&
+            targetX + currentPallet.length > otherPallet.x &&
+            targetY < otherPallet.y + otherPallet.width &&
+            targetY + currentPallet.width > otherPallet.y
+        );
+
+        if (isColliding) {
+            const deltaX = targetX - currentPallet.x;
+            const deltaY = targetY - currentPallet.y;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) { targetX = otherPallet.x - currentPallet.length; } 
+                else { targetX = otherPallet.x + otherPallet.length; }
+            } else {
+                if (deltaY > 0) { targetY = otherPallet.y - currentPallet.width; } 
+                else { targetY = otherPallet.y + otherPallet.width; }
+            }
+            // 3. RE-APLICAR LOS LÍMITES DEL CAMIÓN (CRÍTICO)
+            targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
+            targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
+        }
+    });
+    if (currentPallet.x !== targetX || currentPallet.y !== targetY) {
+        currentPallet.x = targetX;
+        currentPallet.y = targetY;
+        const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
+        palletDiv.style.left = `${targetX}px`;
+        palletDiv.style.top = `${targetY}px`;
     }
-    
-    // Restaurar el estado de colocación si no se rotó
-    pallet.placed = tempPlaced;
+}
+
+function dragEnd() {
+    if (!currentPallet) return;
+    const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
+    palletDiv.style.zIndex = 1; 
+    currentPallet.lastValidX = currentPallet.x; 
+    currentPallet.lastValidY = currentPallet.y;
+    updateLinearMeters(); 
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+    document.removeEventListener('touchmove', dragMove);
+    document.removeEventListener('touchend', dragEnd);
+    currentPallet = null;
 }
 
 document.addEventListener('DOMContentLoaded', renderTruck);
