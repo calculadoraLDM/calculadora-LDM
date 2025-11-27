@@ -1,30 +1,47 @@
-/* --- Diseño Base (Full-Width y Profesional) --- */
+/* --- Diseño Base (Dark Mode Profesional) --- */
+:root {
+    --bg-dark: #1e1e1e; /* Fondo principal oscuro */
+    --bg-card: #252526; /* Fondo de tarjetas y contenedores */
+    --text-light: #f0f0f0; /* Texto claro */
+    --accent-blue: #007bff; /* Azul primario (botones, bordes) */
+    --accent-orange: #ff8f00; /* Naranja (métricas, resultado) */
+    --border-subtle: #3c3c3c; /* Borde sutil */
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f7; 
+    background-color: var(--bg-dark); 
+    color: var(--text-light);
     margin: 0;
     padding: 0;
-    color: #333;
 }
 
 .header {
-    background-color: #007bff; /* Azul corporativo */
-    color: white;
+    background-color: #2b2b2b;
+    color: var(--accent-blue);
     padding: 15px 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     text-align: center;
 }
 
 .header h1 {
     font-size: 1.8em;
     margin: 0;
-    font-weight: 400;
+    font-weight: 300;
 }
 
-/* --- Layout Principal (Flexbox para Full-Width) --- */
+h2 {
+    color: var(--accent-blue);
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+/* --- Layout Principal (Full-Width) --- */
 .app-container {
     display: flex;
-    max-width: 1600px; /* Limitar el ancho en pantallas muy grandes */
+    max-width: 1600px; 
     margin: 20px auto;
     padding: 0 20px;
     gap: 30px;
@@ -32,173 +49,151 @@ body {
 }
 
 .main-column {
-    flex: 3; /* Ocupa 3/4 del espacio (para el camión) */
+    flex: 3; 
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
 .sidebar-column {
-    flex: 1; /* Ocupa 1/4 del espacio (para el resumen) */
+    flex: 1; 
     min-width: 280px;
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #007bff;
-    position: sticky; /* Se queda fijo al hacer scroll */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border-top: 5px solid var(--accent-orange);
+    position: sticky; 
     top: 20px;
 }
 
-
 /* --- Formulario --- */
 .form-container {
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #007bff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border-left: 5px solid var(--accent-blue);
     text-align: left;
 }
-/* ... [Estilos de input, label, button, h2 del formulario] ... */
-/* Ajuste de botón para ser el color de acento */
-.form-container button {
-    background-color: #007bff; 
+
+label { color: var(--text-light); }
+
+input[type="number"] {
+    background-color: #333;
+    color: var(--text-light);
+    border: 1px solid var(--border-subtle);
+    /* ... [Resto de estilos de input] ... */
 }
-.form-container button:hover {
-    background-color: #0056b3; 
+
+.form-container button {
+    background-color: var(--accent-blue); 
+    color: white;
+    margin-top: 15px;
+    /* ... [Resto de estilos de botón] ... */
+}
+.form-container button:hover { background-color: #0069d9; }
+.action-button-secondary {
+    background-color: #555;
+    margin-left: 10px;
+    width: calc(50% - 5px);
+}
+.action-button-secondary:hover {
+    background-color: #666;
+}
+.form-container button:first-of-type {
+    width: calc(50% - 5px);
 }
 
 
 /* --- Área del Camión Estilizado (Visualización) --- */
-
 .professional-truck-area {
     padding: 10px;
-    background-color: white;
+    background-color: var(--bg-card);
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .truck-label-bar {
-    font-size: 1em;
-    font-weight: 600;
-    color: white;
-    background-color: #212529; 
-    padding: 8px 15px;
-    border-radius: 4px 4px 0 0;
-    text-align: left;
+    background-color: #000; 
+    color: #00c4e7; /* Azul cian para la etiqueta */
+    /* ... [Resto de estilos de barra de etiqueta] ... */
 }
 
 .truck-frame {
     position: relative;
-    padding-left: 100px; /* Espacio para la tractora */
+    padding-left: 100px; 
     padding-bottom: 20px; 
-    border-radius: 0 0 4px 4px;
 }
 
-/* Silueta minimalista de la tractora */
+/* Silueta minimalista de la tractora (Negro sobre gris) */
 .tractor-front {
-    position: absolute;
-    width: 90px;
-    height: 158px; 
-    background-color: #212529; /* Negro */
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 8px 0 0 8px;
-    z-index: 2;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    background-color: #000; 
+    /* ... [Resto de estilos de tractora] ... */
 }
 
 /* --- CONTENEDOR DE CARGA (REMOLQUE) --- */
 .truck-container {
-    max-width: 1360px; 
-    margin: 0;
-    overflow: hidden; 
-    
     /* ESCALA SEGURO Y COMPLETO */
     transform: scale(0.65); 
-    transform-origin: top left;
-    
-    height: 158.6px; /* 244px * 0.65 */
+    /* ... [Resto de estilos de contenedor] ... */
 }
 
 .truck {
-    position: relative;
-    width: 1360px; 
-    height: 244px; 
-    border: 3px solid #ced4da;
-    background-color: #e9ecef; 
-    border-radius: 2px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
-    user-select: none; 
-    cursor: default;
-    transform: none; 
+    background-color: #333; /* Piso de carga oscuro */
+    border: 3px solid #666;
+    /* ... [Resto de estilos de remolque] ... */
 }
 
 .truck-result-label {
     font-size: 1.3em;
     font-weight: bold;
-    color: #e65100;
+    color: var(--accent-orange);
     padding-top: 10px;
     text-align: center;
 }
 
 /* --- Palets --- */
 .pallet {
-    position: absolute;
-    border: 2px solid #212529; 
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 2px;
-    cursor: grab; 
-    transition: box-shadow 0.1s ease-in-out; 
-    opacity: 0.95;
-    z-index: 1; 
+    border: 2px solid var(--text-light); 
+    /* El color de fondo se define en JS por lote */
+    color: var(--bg-dark); /* Texto oscuro para contraste */
 }
+.pallet:active {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); 
+}
+
 
 /* --- Resumen LDM (sidebar-column) --- */
-.sidebar-column h2 {
-    color: #007bff;
-    font-size: 1.2em;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    margin-top: 0;
+.metric-card {
+    background-color: #212529;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
+    border: 1px solid var(--border-subtle);
 }
-
-.group-indicator {
-    background-color: red; /* Placeholder, el color real viene de JS */
-}
-
-.total-ldm-label {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 2px solid #ddd;
-    font-size: 1.5em;
+.metric-value {
+    display: block;
+    font-size: 2em;
     font-weight: 700;
-    color: #212529;
+    color: var(--accent-orange);
+}
+.metric-label {
+    display: block;
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 5px;
 }
 
-#total-ldm-value {
-    color: #e65100;
+#group-summary {
+    /* ... [Estilos de resumen] ... */
 }
-.action-button {
-    background-color: #dc3545; /* Rojo para acción de limpiar */
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 4px;
-    width: 100%;
-    margin-top: 20px;
-    transition: background-color 0.2s;
+.group-item {
+    border-bottom: 1px dashed #3c3c3c;
+    /* ... [Resto de estilos de item de grupo] ... */
 }
-.action-button:hover {
-    background-color: #c82333;
+.ldm-value {
+    font-weight: 600;
+    color: var(--accent-blue);
 }
