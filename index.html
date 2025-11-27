@@ -3,51 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Carga LDM Profesional</title>
+    <title>Simulador de Carga de Camión - Final</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="main-wrapper">
-        
-        <h1>Simulador de Carga de Camión (LDM)</h1>
-        
-        <div class="control-dashboard"> 
-            
-            <div class="form-container">
-                <h2>1. Entrada de Palets</h2>
-                <label for="pallet-width">Ancho del palet (cm):</label>
-                <input type="number" id="pallet-width" min="1" required>
-                <label for="pallet-length">Largo del palet (cm):</label>
-                <input type="number" id="pallet-length" min="1" required>
-                <label for="pallet-quantity">Cantidad:</label>
-                <input type="number" id="pallet-quantity" min="1" required>
-                
-                <div class="button-group">
-                    <button onclick="addPallets()">Añadir Palets</button>
-                    <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
+        <header class="app-header">
+            <h1>Simulador de Carga de Camión (LDM)</h1>
+        </header>
+
+        <div class="app-dashboard">
+
+            <div class="control-panel">
+                <div class="form-container card-panel">
+                    <h2>Entrada de Palets</h2>
+                    <div class="input-group">
+                        <label for="pallet-width">Ancho del palet (cm):</label>
+                        <input type="number" id="pallet-width" min="1" required> 
+                    </div>
+                    <div class="input-group">
+                        <label for="pallet-length">Largo del palet (cm):</label>
+                        <input type="number" id="pallet-length" min="1" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="pallet-quantity">Cantidad:</label>
+                        <input type="number" id="pallet-quantity" min="1" required>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button onclick="addPallets()">Añadir Palets</button>
+                        <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-panel">
+                <div class="summary-area card-panel">
+                    <h2>📊 Resumen de LDM por Grupo</h2>
+                    <div id="group-summary">
+                        <p class="empty-message">Aún no hay cargas añadidas.</p>
+                    </div>
+                    <div class="total-ldm-label">
+                        LDM Total: <span id="total-ldm-value">0.00 m</span>
+                    </div>
                 </div>
             </div>
             
-            <div class="summary-area">
-                <h2>2. Resumen de Carga</h2>
-                <div id="group-summary">
-                    <p class="empty-message">Aún no hay cargas añadidas.</p>
-                </div>
-                <div class="total-ldm-label">
-                    LDM Total: <span id="total-ldm-value" class="total-value-metric">0.00 m</span>
-                </div>
-            </div>
         </div>
         
-        <div class="truck-display-area">
-            <h3>Visualización del Remolque (Apilamiento Automático)</h3>
-            <div class="truck-container">
+        <div class="visual-panel">
+            <h2 class="visual-title">Visualización del Remolque</h2>
+            <div class="truck-container card-panel">
                 <div class="truck" id="truck"></div>
             </div>
-            <p id="result" class="result-footer-text">Metros lineales ocupados: 0.00 m</p>
+            <p id="result" class="result-display">Metros lineales ocupados: 0.00 m</p>
         </div>
 
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
