@@ -1,7 +1,7 @@
-/* --- Diseño Base (Minimalista y Funcional) --- */
+/* --- Diseño Base (Volviendo al estilo original) --- */
 body {
-    font-family: 'Roboto', 'Segoe UI', sans-serif;
-    background-color: #f8f8f8;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6; 
     margin: 0;
     padding: 0;
     text-align: center;
@@ -9,160 +9,136 @@ body {
 }
 
 h1 {
-    font-size: 2.2em;
-    padding: 20px 0;
-    margin: 0;
-    color: #00796b; /* Verde Teal */
-    border-bottom: 2px solid #eee;
+    font-size: 2.5em;
+    margin-top: 20px;
+    color: #1e3a34; /* Verde oscuro */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
 }
 
-h2 {
-    color: #00796b;
-    font-size: 1.2em;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
-}
-
-/* --- Layout Principal --- */
-.main-layout {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 30px;
-    margin-top: 30px;
-    padding: 0 20px;
-}
-
-/* --- Formulario --- */
+/* Contenedor del formulario (Centrado) */
 .form-container {
     background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    width: 300px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #00796b;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
     text-align: left;
 }
 
-label {
-    font-size: 0.9em;
-    margin-top: 10px;
-    display: block;
-    font-weight: 600;
+.form-container h2 {
+    color: #00796b;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    font-size: 1.3em;
 }
 
-input[type="number"] {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-}
+/* ... [Resto de estilos de input, button, result] ... */
 
-button {
-    background-color: #ff8f00; /* Naranja Acceso */
-    color: white;
-    border: none;
-    padding: 12px;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 4px;
-    width: 100%;
-    transition: background-color 0.2s;
-}
-
-button:hover {
-    background-color: #e67c00;
-}
-
-/* --- Resumen de LDM Fijo (Esquina Derecha) --- */
-.summary-fixed {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 250px;
+/* --- Resumen de LDM (Encima del Camión) --- */
+.summary-area {
+    width: 90%;
+    max-width: 884px; /* Ancho del camión a escala 0.65 */
+    margin: 20px auto 10px auto;
     background-color: #ffffff;
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    border-top: 5px solid #ff8f00;
-    z-index: 100;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #ff8f00; 
     text-align: left;
 }
 
-/* ... [Mantenemos estilos de .group-item, .ldm-value, .total-ldm-label, etc.] ... */
-
-/* --- Zona de Visualización del Remolque (SOLUCIÓN DE ESCALA) --- */
-.truck-display-area {
-    flex-grow: 1;
-    max-width: 1000px; /* Ancho máximo visible */
-    padding: 0 10px;
+.summary-area h2 {
+    color: #e65100;
+    font-size: 1.2em;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    margin-top: 0;
 }
 
-.truck-label {
+#group-summary {
+    min-height: 50px; 
+    padding: 5px 0;
+}
+
+.group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
     font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
 }
 
-.truck-container {
-    /* Usamos proporciones relativas para que se ajuste al ancho */
-    width: 100%; 
-    padding-bottom: 18%; /* Altura relativa (244/1360 ≈ 0.179) para mantener proporción */
-    position: relative;
-    border: 2px solid #333;
-    background-color: #ddd;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-    border-radius: 4px;
+.group-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    border: 1px solid #333;
 }
 
-/* El remolque se estira para cubrir el 100% del contenedor */
-.truck {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    /* El contenedor de palets es la única zona de carga */
-    margin: 0;
-    border: none;
-    background-color: transparent; 
-}
-
-.truck-result-label {
+.total-ldm-label {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #ddd;
     font-size: 1.3em;
-    font-weight: bold;
+    font-weight: 700;
+    color: #004d40;
+}
+
+#total-ldm-value {
     color: #e65100;
 }
 
-/* --- Palets (Ajustados a la nueva escala relativa) --- */
+/* --- VISUALIZACIÓN DEL REMOLQUE --- */
+.truck-container {
+    /* Contenedor que maneja la escala */
+    max-width: 884px; /* 1360 * 0.65 */
+    margin: 20px auto;
+    overflow: hidden; 
+    padding: 0;
+}
+
+.truck {
+    position: relative;
+    /* TAMAÑOS REALES */
+    width: 1360px; 
+    height: 244px; 
+    
+    /* ESCALA REDUCIDA A 0.65 */
+    transform: scale(0.65); 
+    transform-origin: top left;
+    
+    margin: 0 auto; 
+    border: 3px solid #333;
+    background-color: #e0e0e0; 
+    border-radius: 4px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    user-select: none; 
+    cursor: default;
+    min-width: 1360px;
+}
+
+/* --- Palets (Mantenido) --- */
 .pallet {
     position: absolute;
-    /* La posición (left, top) y tamaño (width, height) seguirán siendo en píxeles 
-       en script.js, pero se escalarán visualmente porque su padre (.truck) 
-       está escalado por CSS. */
-    border: 1px solid #333; 
-    border-radius: 2px;
-    color: white;
-    font-size: 12px;
-    font-weight: 700;
+    border: 2px solid #263238; 
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: grab;
-    opacity: 0.9;
-    transition: box-shadow 0.1s;
-    z-index: 1;
+    border-radius: 2px;
+    cursor: grab; 
+    transition: box-shadow 0.1s ease-in-out; 
+    opacity: 0.95;
+    z-index: 1; 
 }
-
-.pallet:active {
-    cursor: grabbing;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    opacity: 1;
-    z-index: 10;
-}
+/* ... [Resto de estilos de palets] ... */
