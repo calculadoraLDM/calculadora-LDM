@@ -7,6 +7,7 @@ let nextGroupId = 1;
 let colorIndex = 0; 
 let currentPallet = null; 
 
+// Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
 
@@ -60,10 +61,10 @@ function addPallets() {
 }
 
 /**
- * Lógica First-Fit CRÍTICA (Prioriza Y luego X para llenar el ancho).
+ * **CRÍTICO:** Verifica la disponibilidad del espacio y los límites del camión.
  */
 function isPositionAvailable(x, y, pallet) {
-    // 1. CRÍTICO: Verificar límites del camión
+    // 1. Verificar límites del camión
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
         return false;
     }
@@ -84,6 +85,9 @@ function isPositionAvailable(x, y, pallet) {
     });
 }
 
+/**
+ * **CRÍTICO:** Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ */
 function findBestFitY(currentPallet) {
     // Buscamos el hueco más a la izquierda (X) y lo más arriba posible (Y)
     for (let x = 0; x <= TRUCK_WIDTH - currentPallet.length; x++) {
@@ -141,7 +145,7 @@ function renderTruck() {
 }
 
 /**
- * Calcula LDM por Grupo y Total.
+ * Calcula LDM por Grupo y Total (Incluye el renderizado del resumen).
  */
 function updateLinearMeters() {
     let maxXTotal = 0;
