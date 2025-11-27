@@ -153,7 +153,6 @@ function findFitAtLocation(pW, pL, currentPallet) {
         // Bucle interior: Prioriza el eje Y (arriba a abajo) para llenar la columna.
         for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
             if (isPositionAvailable(x, y, pW, pL, currentPallet)) {
-                // Al encontrar el primer spot (x=0, y=0), lo devuelve, forzando la colocación pegada a la pared.
                 return { x, y };
             }
         }
@@ -276,6 +275,7 @@ function endDrag() {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
+    // 1. Auto-fit inicial (solo para palets no colocados)
     pallets.forEach(pallet => {
         if (!pallet.placed) {
             let placement = findBestFitPosition(pallet, true); 
@@ -289,10 +289,11 @@ function renderTruck() {
         }
     });
     
-    // Paso 2: Renderizar la Visualización
+    // 2. Renderizar y calcular altura máxima ocupada
     truck.innerHTML = '';
     let maxX = 0;
-    
+    let maxY = 0; // Para calcular la altura ocupada
+
     pallets.filter(p => p.placed).forEach(pallet => {
         const palletW = pallet.rotated ? pallet.length : pallet.width;
         const palletL = pallet.rotated ? pallet.width : pallet.length;
@@ -314,7 +315,14 @@ function renderTruck() {
         truck.appendChild(palletDiv);
         
         maxX = Math.max(maxX, pallet.x + palletL);
+        maxY = Math.max(maxY, pallet.y + palletW); // Actualiza la altura máxima ocupada
     });
+    
+    // 3. Ajustar la altura visual del contenedor del camión a la altura ocupada
+    const truckHeight = Math.max(maxY, 240); // Asegura un mínimo de 240px si está vacío
+    truck.style.height = `${truckHeight}px`;
+    truck.style.minHeight = `${truckHeight}px`;
+
 
     updateLinearMeters(maxX);
 }
