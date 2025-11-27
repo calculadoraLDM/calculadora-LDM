@@ -1,16 +1,17 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c']; 
+const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#1abc9c', '#3498db', '#f1c40f']; // Expanded color list
 let pallets = [];
 let nextPalletId = 0;
-let nextGroupId = 1; 
-let colorIndex = 0; 
+let nextGroupId = 1; // CRITICAL: Tracks the group ID
+let colorIndex = 0; // CRITICAL: Tracks the color index
 
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
 
 function getNextColor() {
+    // Gets the color for the current group and ensures rotation
     const color = COLORS[colorIndex % COLORS.length];
     return color;
 }
@@ -33,22 +34,17 @@ function addPallets() {
         return;
     }
 
-    if (palletWidth > TRUCK_HEIGHT || palletLength > TRUCK_WIDTH) {
-         alert(`El palet no cabe. Dimensiones máximas del camión: ${TRUCK_WIDTH}cm x ${TRUCK_HEIGHT}cm.`);
-         return;
-    }
-
-    const color = getNextColor(); 
+    const color = getNextColor(); // Get color before advancing index
     const groupId = nextGroupId++; 
-    colorIndex++;
+    colorIndex++; // Advance color index only once per batch (CRITICAL for groups)
 
     for (let i = 0; i < palletQuantity; i++) {
         pallets.push({
             id: nextPalletId++,
-            groupId: groupId,
+            groupId: groupId, // Assign Group ID
             width: palletWidth,
             length: palletLength,
-            color: color,
+            color: color, // Assign Group Color
             x: 0, 
             y: 0,
             placed: false
@@ -59,39 +55,41 @@ function addPallets() {
 }
 
 /**
- * CRÍTICO: Verifica la disponibilidad del espacio y los límites.
+ * Checks for collision and boundary infringement.
  */
-function isPositionAvailable(x, y, pallet) {
-    // 1. VERIFICACIÓN CRÍTICA DE LÍMITES
-    if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
+function isPositionAvailable(x, y, pW, pL, currentPallet) {
+    // Check boundaries
+    if (x < 0 || y < 0 || x + pL > TRUCK_WIDTH || y + pW > TRUCK_HEIGHT) {
         return false;
     }
 
-    // 2. Verificar solapamiento
+    // Check for overlaps with already placed palets
     return !pallets.some(other => {
-        if (!other.placed || other.id === pallet.id) return false;
+        if (!other.placed || other.id === currentPallet.id) return false;
         
         const otherW = other.width;
         const otherL = other.length;
 
         return (
             x < other.x + otherL &&
-            x + pallet.length > other.x &&
+            x + pL > other.x &&
             y < other.y + otherW &&
-            y + pallet.width > other.y
+            y + pW > other.y
         );
     });
 }
 
+
 /**
- * CRÍTICO: Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ * CRITICAL FIX: Finds the next available position, prioritizing Y (width) before X (length).
  */
-function findBestFitY(currentPallet) {
-    // Buscamos el hueco más a la izquierda (X) y lo más arriba posible (Y)
-    for (let x = 0; x <= TRUCK_WIDTH - currentPallet.length; x++) {
-        for (let y = 0; y <= TRUCK_HEIGHT - currentPallet.width; y++) {
-            if (isPositionAvailable(x, y, currentPallet)) {
-                return { x, y };
+function findFit(pW, pL, currentPallet) {
+    // Iterates X (length) on the outer loop to ensure we check all possibilities to the right
+    for (let x = 0; x <= TRUCK_WIDTH - pL; x++) {
+        // Iterates Y (width) on the inner loop to fill the truck's width first
+        for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
+            if (isPositionAvailable(x, y, pW, pL, currentPallet)) {
+                return { x, y }; // Found the highest and left-most spot
             }
         }
     }
@@ -101,12 +99,14 @@ function findBestFitY(currentPallet) {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
+    // Reset placement status for all palets
     pallets.forEach(p => p.placed = false);
 
     pallets.forEach(pallet => {
         if (!pallet.placed) {
-            let placement = findBestFitY(pallet);
-
+            // Placement logic
+            let placement = findFit(pallet.width, pallet.length, pallet);
+            
             if (placement) {
                 pallet.x = placement.x;
                 pallet.y = placement.y;
@@ -117,7 +117,7 @@ function renderTruck() {
         }
     });
     
-    // 2. Renderizar la Visualización
+    // 2. Render and Calculate LDM
     truck.innerHTML = '';
     let maxX = 0;
     
@@ -127,19 +127,24 @@ function renderTruck() {
         
         const palletDiv = document.createElement('div');
         palletDiv.className = 'pallet';
-        palletDiv.style.backgroundColor = pallet.color; 
+        palletDiv.style.backgroundColor = pallet.color; // CRITICAL: Uses the correct group color
         palletDiv.style.width = `${palletL}px`;
         palletDiv.style.height = `${palletW}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
-        palletDiv.textContent = `${pallet.id}`; 
+        palletDiv.textContent = `${pallet.groupId}`; // Shows Group ID for verification
         
         truck.appendChild(palletDiv);
         
         maxX = Math.max(maxX, pallet.x + palletL);
     });
 
-    // Actualiza LDM (omito la función updateLinearMeters por espacio)
+    // Final LDM Update
+    const totalLinearMeters = maxX / 100;
+    document.getElementById('result').textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
+    
+    // Placeholder for Group Summary (requires update to the HTML structure for visualization)
+    console.log('LDM Total (cm):', maxX);
 }
 
 document.addEventListener('DOMContentLoaded', renderTruck);
