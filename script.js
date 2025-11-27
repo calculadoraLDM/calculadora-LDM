@@ -3,9 +3,8 @@ const TRUCK_HEIGHT = 244; // 2.44m en cm
 const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#1abc9c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
 let pallets = [];
 let nextPalletId = 0;
-let nextGroupId = 1; 
-let colorIndex = 0; // Usaremos colorIndex para garantizar el ciclo de colores
-let currentPallet = null; 
+let nextGroupId = 1; // CRÍTICO: Contador para grupos
+let colorIndex = 0; // CRÍTICO: Índice para colores por grupo
 
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
@@ -21,7 +20,7 @@ function clearPallets() {
     pallets = [];
     nextPalletId = 0;
     nextGroupId = 1; // Reiniciamos el contador de grupo
-    colorIndex = 0;
+    colorIndex = 0; // Reiniciamos el índice de color
     renderTruck();
 }
 
@@ -35,17 +34,17 @@ function addPallets() {
         return;
     }
 
-    const color = getNextColor(); 
+    const color = getNextColor(); // Obtiene el color para el lote
     const groupId = nextGroupId++; // Obtiene ID de grupo y avanza el contador
-    colorIndex++; // Avanza el índice de color solo una vez por lote
+    colorIndex++; // Avanza el índice de color solo una vez por lote (CRÍTICO)
 
     for (let i = 0; i < palletQuantity; i++) {
         pallets.push({
             id: nextPalletId++,
-            groupId: groupId, // CRÍTICO: Asignación de ID de grupo
+            groupId: groupId, // Asignación del grupo
             width: palletWidth,
             length: palletLength,
-            color: color,
+            color: color, // El mismo color para todo el grupo
             x: 0, 
             y: 0,
             placed: false
@@ -76,11 +75,11 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * Lógica First-Fit (Optimización Y primero)
+ * Lógica First-Fit CRÍTICA (Prioriza Y luego X para llenar el ancho).
  */
 function findBestFitY(currentPallet) {
-    // Buscamos el primer hueco disponible (X luego Y)
-    // Esto garantiza que el palet siempre intente ir lo más a la izquierda y lo más arriba posible.
+    // La iteración debe ser X (longitud) externa e Y (ancho) interna
+    // para buscar el hueco más a la izquierda (menor X) y lo más arriba posible (menor Y).
     for (let x = 0; x <= TRUCK_WIDTH - currentPallet.length; x++) {
         for (let y = 0; y <= TRUCK_HEIGHT - currentPallet.width; y++) {
             if (isPositionAvailable(x, y, currentPallet)) {
@@ -98,6 +97,7 @@ function renderTruck() {
 
     pallets.forEach(pallet => {
         if (!pallet.placed) {
+            // Utilizamos la lógica que prioriza el apilamiento en Y
             let placement = findBestFitY(pallet);
 
             if (placement) {
@@ -110,6 +110,7 @@ function renderTruck() {
         }
     });
     
+    // 2. Renderizar la Visualización
     truck.innerHTML = '';
     let maxX = 0;
     
@@ -119,12 +120,12 @@ function renderTruck() {
         
         const palletDiv = document.createElement('div');
         palletDiv.className = 'pallet';
-        palletDiv.style.backgroundColor = pallet.color; 
+        palletDiv.style.backgroundColor = pallet.color; // CRÍTICO: Usa el color de grupo
         palletDiv.style.width = `${palletL}px`;
         palletDiv.style.height = `${palletW}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
-        palletDiv.textContent = `${pallet.id}`; // Usamos ID simple para el texto
+        palletDiv.textContent = `${pallet.id}`; 
         
         truck.appendChild(palletDiv);
         
@@ -135,7 +136,7 @@ function renderTruck() {
 }
 
 /**
- * Calcula LDM por Grupo y Total.
+ * Calcula LDM por Grupo y Total (Incluye el renderizado del resumen).
  */
 function updateLinearMeters() {
     let maxXTotal = 0;
@@ -162,26 +163,28 @@ function updateLinearMeters() {
 
     const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
-    if (groupList.length === 0) {
-        if (groupSummaryDiv) groupSummaryDiv.innerHTML = '<p class="empty-message">Aún no hay cargas añadidas.</p>';
-    } else {
-        groupSummaryDiv.innerHTML = groupList.map(group => {
-            const ldm = (group.maxX / 100).toFixed(2);
-            return `
-                <div class="group-item">
-                    <span>
-                        <span class="group-indicator" style="background-color: ${group.color};"></span>
-                        Grupo ${group.groupId}
-                    </span>
-                    <span class="ldm-value">${ldm} m</span>
-                </div>
-            `;
-        }).join('');
+    if (groupSummaryDiv) {
+        if (groupList.length === 0) {
+            groupSummaryDiv.innerHTML = '<p class="empty-message">Aún no hay cargas añadidas.</p>';
+        } else {
+            groupSummaryDiv.innerHTML = groupList.map(group => {
+                const ldm = (group.maxX / 100).toFixed(2);
+                return `
+                    <div class="group-item">
+                        <span>
+                            <span class="group-indicator" style="background-color: ${group.color};"></span>
+                            Grupo ${group.groupId}
+                        </span>
+                        <span class="ldm-value">${ldm} m</span>
+                    </div>
+                `;
+            }).join('');
+        }
     }
     
     const totalLinearMeters = maxXTotal / 100;
     
-    // CRÍTICO: Actualizamos los elementos de resumen
+    // Actualizamos las métricas
     if (totalLdmValueSpan) totalLdmValueSpan.textContent = `${totalLinearMeters.toFixed(2)} m`;
     if (resultParagraph) resultParagraph.textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
 }
