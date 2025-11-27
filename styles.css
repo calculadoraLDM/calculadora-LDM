@@ -1,89 +1,108 @@
-/* --- Diseño Base (Minimalista y Profesional) --- */
+/* --- Diseño Base (Full-Width y Profesional) --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f4f7; /* Fondo muy claro y sobrio */
+    background-color: #f0f4f7; 
     margin: 0;
     padding: 0;
-    text-align: center;
     color: #333;
 }
 
-h1 {
-    font-size: 2.5em;
-    padding: 20px 0;
-    margin: 0;
-    color: #212529; /* Negro profundo */
-    border-bottom: 3px solid #007bff; /* Azul profesional */
+.header {
+    background-color: #007bff; /* Azul corporativo */
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-/* Contenedor del formulario (Centrado) */
+.header h1 {
+    font-size: 1.8em;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* --- Layout Principal (Flexbox para Full-Width) --- */
+.app-container {
+    display: flex;
+    max-width: 1600px; /* Limitar el ancho en pantallas muy grandes */
+    margin: 20px auto;
+    padding: 0 20px;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.main-column {
+    flex: 3; /* Ocupa 3/4 del espacio (para el camión) */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-column {
+    flex: 1; /* Ocupa 1/4 del espacio (para el resumen) */
+    min-width: 280px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #007bff;
+    position: sticky; /* Se queda fijo al hacer scroll */
+    top: 20px;
+}
+
+
+/* --- Formulario --- */
 .form-container {
     background-color: #ffffff;
     padding: 25px;
     border-radius: 8px;
-    margin: 30px auto 20px auto;
-    width: 90%;
-    max-width: 400px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #007bff; /* Azul acento */
+    border-left: 5px solid #007bff;
     text-align: left;
 }
-
-.form-container h2 {
-    color: #007bff;
-    font-size: 1.3em;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    margin-bottom: 15px;
+/* ... [Estilos de input, label, button, h2 del formulario] ... */
+/* Ajuste de botón para ser el color de acento */
+.form-container button {
+    background-color: #007bff; 
 }
-/* ... [Resto de estilos de input, button, label] ... */
-
-/* --- Layout Principal (Camión + Resumen) --- */
-.truck-summary-layout {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 30px;
-    width: 95%;
-    max-width: 1400px;
-    margin: 20px auto;
+.form-container button:hover {
+    background-color: #0056b3; 
 }
+
+
+/* --- Área del Camión Estilizado (Visualización) --- */
 
 .professional-truck-area {
-    flex-grow: 1;
-    max-width: 950px; /* Ancho máximo para la zona de camión + tractora */
-    text-align: left;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
-
-/* --- ESTILOS DEL CAMIÓN (SILUETA PROFESIONAL) --- */
 
 .truck-label-bar {
     font-size: 1em;
     font-weight: 600;
     color: white;
-    background-color: #212529; /* Negro para la barra de título */
+    background-color: #212529; 
     padding: 8px 15px;
     border-radius: 4px 4px 0 0;
-    margin-top: 20px;
+    text-align: left;
 }
 
 .truck-frame {
     position: relative;
-    padding-left: 120px; /* Espacio para la tractora */
-    padding-bottom: 30px; /* Espacio para las ruedas visuales (sombra) */
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding-left: 100px; /* Espacio para la tractora */
+    padding-bottom: 20px; 
     border-radius: 0 0 4px 4px;
 }
 
 /* Silueta minimalista de la tractora */
 .tractor-front {
     position: absolute;
-    width: 100px;
-    height: 158px; /* Altura ajustada a la del remolque 244px * 0.65 ≈ 158.6px */
-    background-color: #212529; /* Color de camión negro/oscuro */
-    left: 10px;
+    width: 90px;
+    height: 158px; 
+    background-color: #212529; /* Negro */
+    left: 0;
     top: 50%;
     transform: translateY(-50%);
     border-radius: 8px 0 0 8px;
@@ -91,54 +110,44 @@ h1 {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
 }
 
-.tractor-front::after {
-    content: '';
-    position: absolute;
-    width: 70%;
-    height: 40%;
-    background-color: #6c757d; /* Color de la ventana (gris) */
-    top: 10%;
-    right: 0;
-    border-radius: 0 0 0 5px;
-}
-
-
 /* --- CONTENEDOR DE CARGA (REMOLQUE) --- */
 .truck-container {
-    /* Usaremos este contenedor para aplicar el escalado */
     max-width: 1360px; 
     margin: 0;
     overflow: hidden; 
     
-    /* ESCALA REDUCIDA A 0.65 para caber siempre */
+    /* ESCALA SEGURO Y COMPLETO */
     transform: scale(0.65); 
     transform-origin: top left;
     
-    /* Compensar el espacio libre del remolque escalado */
     height: 158.6px; /* 244px * 0.65 */
 }
 
 .truck {
     position: relative;
-    /* TAMAÑOS REALES EN PIXELES (para que el JS posicione bien) */
     width: 1360px; 
     height: 244px; 
-    
-    /* El contenedor visual del remolque */
-    border: 3px solid #ced4da; /* Borde sutil */
-    background-color: #e9ecef; /* Fondo claro del suelo del remolque */
+    border: 3px solid #ced4da;
+    background-color: #e9ecef; 
     border-radius: 2px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
     user-select: none; 
     cursor: default;
-    /* Quitamos el transform de aquí */
     transform: none; 
+}
+
+.truck-result-label {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e65100;
+    padding-top: 10px;
+    text-align: center;
 }
 
 /* --- Palets --- */
 .pallet {
     position: absolute;
-    border: 2px solid #212529; /* Borde oscuro */
+    border: 2px solid #212529; 
     color: #fff;
     font-size: 14px;
     font-weight: bold;
@@ -151,4 +160,45 @@ h1 {
     opacity: 0.95;
     z-index: 1; 
 }
-/* ... [Resto de estilos de LDM Summary y Pallets] ... */
+
+/* --- Resumen LDM (sidebar-column) --- */
+.sidebar-column h2 {
+    color: #007bff;
+    font-size: 1.2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-top: 0;
+}
+
+.group-indicator {
+    background-color: red; /* Placeholder, el color real viene de JS */
+}
+
+.total-ldm-label {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #ddd;
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #212529;
+}
+
+#total-ldm-value {
+    color: #e65100;
+}
+.action-button {
+    background-color: #dc3545; /* Rojo para acción de limpiar */
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+.action-button:hover {
+    background-color: #c82333;
+}
