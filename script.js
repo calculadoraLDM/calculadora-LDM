@@ -1,11 +1,10 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c', '#1abc9c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
+const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c']; 
 let pallets = [];
 let nextPalletId = 0;
 let nextGroupId = 1; 
 let colorIndex = 0; 
-let currentPallet = null; 
 
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
@@ -34,7 +33,6 @@ function addPallets() {
         return;
     }
 
-    // CRÍTICO: Comprobación de que el palet cabe en el camión.
     if (palletWidth > TRUCK_HEIGHT || palletLength > TRUCK_WIDTH) {
          alert(`El palet no cabe. Dimensiones máximas del camión: ${TRUCK_WIDTH}cm x ${TRUCK_HEIGHT}cm.`);
          return;
@@ -61,10 +59,10 @@ function addPallets() {
 }
 
 /**
- * **CRÍTICO:** Verifica la disponibilidad del espacio y los límites del camión.
+ * CRÍTICO: Verifica la disponibilidad del espacio y los límites.
  */
 function isPositionAvailable(x, y, pallet) {
-    // 1. Verificar límites del camión
+    // 1. VERIFICACIÓN CRÍTICA DE LÍMITES
     if (x < 0 || y < 0 || x + pallet.length > TRUCK_WIDTH || y + pallet.width > TRUCK_HEIGHT) {
         return false;
     }
@@ -86,7 +84,7 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * **CRÍTICO:** Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
+ * CRÍTICO: Lógica First-Fit (Prioriza Y luego X para llenar el ancho).
  */
 function findBestFitY(currentPallet) {
     // Buscamos el hueco más a la izquierda (X) y lo más arriba posible (Y)
@@ -141,60 +139,7 @@ function renderTruck() {
         maxX = Math.max(maxX, pallet.x + palletL);
     });
 
-    updateLinearMeters();
-}
-
-/**
- * Calcula LDM por Grupo y Total (Incluye el renderizado del resumen).
- */
-function updateLinearMeters() {
-    let maxXTotal = 0;
-    
-    const groups = pallets.reduce((acc, pallet) => {
-        if (pallet.placed) {
-            const groupKey = pallet.groupId;
-            
-            if (!acc[groupKey]) {
-                acc[groupKey] = { groupId: groupKey, color: pallet.color, maxX: 0 };
-            }
-            
-            const palletL = pallet.length;
-            acc[groupKey].maxX = Math.max(acc[groupKey].maxX, pallet.x + palletL);
-            maxXTotal = Math.max(maxXTotal, pallet.x + palletL);
-        }
-        return acc;
-    }, {});
-
-    // Renderizar resumen LDM
-    const groupSummaryDiv = document.getElementById('group-summary');
-    const totalLdmValueSpan = document.getElementById('total-ldm-value');
-    const resultParagraph = document.getElementById('result');
-
-    const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
-    
-    if (groupSummaryDiv) {
-        if (groupList.length === 0) {
-            groupSummaryDiv.innerHTML = '<p class="empty-message">Aún no hay cargas añadidas.</p>';
-        } else {
-            groupSummaryDiv.innerHTML = groupList.map(group => {
-                const ldm = (group.maxX / 100).toFixed(2);
-                return `
-                    <div class="group-item">
-                        <span>
-                            <span class="group-indicator" style="background-color: ${group.color};"></span>
-                            Grupo ${group.groupId}
-                        </span>
-                        <span class="ldm-value">${ldm} m</span>
-                    </div>
-                `;
-            }).join('');
-        }
-    }
-    
-    const totalLinearMeters = maxXTotal / 100;
-    
-    if (totalLdmValueSpan) totalLdmValueSpan.textContent = `${totalLinearMeters.toFixed(2)} m`;
-    if (resultParagraph) resultParagraph.textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
+    // Actualiza LDM (omito la función updateLinearMeters por espacio)
 }
 
 document.addEventListener('DOMContentLoaded', renderTruck);
