@@ -1,6 +1,6 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#ff7043', '#4caf50', '#2196f3', '#ffeb3b', '#9c27b0', '#00bcd4', '#795548', '#ffc107', '#424242', '#ad1457']; 
+const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e74c3c', '#3498db', '#f1c40f', '#95a5a6', '#d35400']; 
 let pallets = [];
 let nextPalletId = 0;
 let nextGroupId = 1; 
@@ -15,8 +15,6 @@ function getNextColor() {
     return color;
 }
 
-// **CORRECCIÓN CRÍTICA:** Define las funciones de control en el ámbito global.
-// Esto garantiza que el HTML (onclick="addPallets()") pueda encontrarlas.
 window.clearPallets = function() {
     pallets = [];
     nextPalletId = 0;
@@ -78,15 +76,20 @@ window.addPallets = function() {
     renderTruck();
 }
 
-// --- Funciones de Renderizado y LDM ---
-
+/**
+ * **CORRECCIÓN DE COLOCACIÓN:** Lógica de búsqueda estable (priorizando arriba-izquierda).
+ */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // Recalcular la colocación para palets NO colocados
-    pallets.filter(p => !p.placed).forEach(p => {
+    // 1. Recalcular la colocación para TODOS los palets no colocados
+    // Esta es la lógica crítica de estabilidad: buscamos el primer hueco disponible.
+    pallets.forEach(p => p.placed = false); // Reseteamos la colocación
+
+    pallets.forEach(p => {
         let placed = false;
         
+        // Búsqueda simple y estricta de arriba-izquierda (prioriza la compactación lateral)
         for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
             for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
                 
@@ -97,20 +100,22 @@ function renderTruck() {
                     p.lastValidX = x_pos;
                     p.lastValidY = y_pos;
                     placed = true;
-                    break;
+                    break; 
                 }
             }
             if (placed) {
+                // Si encontramos un lugar, salimos de la búsqueda X para mantener el orden.
                 break; 
             }
         }
         
         if (!placed) {
-            console.warn(`Palet ${p.id} no cabe en la colocación automática.`);
+            console.warn(`Palet ${p.id} no cabe en el camión.`);
             p.placed = false; 
         }
     });
     
+    // 2. Renderizar la Visualización
     truck.innerHTML = '';
     
     pallets.filter(p => p.placed).forEach(pallet => {
@@ -134,6 +139,8 @@ function renderTruck() {
     updateLinearMeters();
 }
 
+// --- Funciones de LDM y Arrastre (Mantenidas y Estables) ---
+
 function updateLinearMeters() {
     let maxXTotal = 0;
     
@@ -151,6 +158,7 @@ function updateLinearMeters() {
         return acc;
     }, {});
 
+    // Renderizar la lista de grupos (Bloque 4)
     const groupSummaryDiv = document.getElementById('group-summary');
     const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
@@ -177,25 +185,20 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar con Colisión de Tope ---
+// --- Lógica de Arrastrar y Soltar con Colisión de Tope (ESTABLE) ---
+// (Las funciones dragStart, dragMove, dragEnd se mantienen sin cambios ya que la lógica es correcta)
 
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
-    
     const palletDiv = e.target;
     const id = parseInt(palletDiv.id.replace('pallet-', ''));
     currentPallet = pallets.find(p => p.id === id);
-
     if (!currentPallet) return;
-
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
-    
     currentPallet.offsetX = clientX - currentPallet.x;
     currentPallet.offsetY = clientY - currentPallet.y;
-
     palletDiv.style.zIndex = 10;
-    
     document.addEventListener('mousemove', dragMove);
     document.addEventListener('mouseup', dragEnd);
     document.addEventListener('touchmove', dragMove, { passive: false });
@@ -204,12 +207,9 @@ function dragStart(e) {
 
 function dragMove(e) {
     if (!currentPallet) return;
-    
     if (e.type === 'touchmove') e.preventDefault();
-
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
-
     let targetX = clientX - currentPallet.offsetX;
     let targetY = clientY - currentPallet.offsetY;
 
@@ -217,20 +217,17 @@ function dragMove(e) {
     targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
     targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
-    // 2. Comprobar y ajustar la colisión (Sistema de Tope)
+    // 2. Colisión y Ajuste
     pallets.filter(p => p.id !== currentPallet.id && p.placed).forEach(otherPallet => {
-        
         const isColliding = (
             targetX < otherPallet.x + otherPallet.length &&
             targetX + currentPallet.length > otherPallet.x &&
             targetY < otherPallet.y + otherPallet.width &&
             targetY + currentPallet.width > otherPallet.y
         );
-
         if (isColliding) {
             const deltaX = targetX - currentPallet.x;
             const deltaY = targetY - currentPallet.y;
-
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 if (deltaX > 0) { targetX = otherPallet.x - currentPallet.length; } 
                 else { targetX = otherPallet.x + otherPallet.length; }
@@ -238,18 +235,14 @@ function dragMove(e) {
                 if (deltaY > 0) { targetY = otherPallet.y - currentPallet.width; } 
                 else { targetY = otherPallet.y + otherPallet.width; }
             }
-            
-            // 3. RE-APLICAR LOS LÍMITES DEL CAMIÓN (CRÍTICO: Mantiene el palet dentro)
+            // 3. RE-APLICAR LOS LÍMITES DEL CAMIÓN (CRÍTICO)
             targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
             targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
         }
     });
-
-    // 4. Aplicar la posición final
     if (currentPallet.x !== targetX || currentPallet.y !== targetY) {
         currentPallet.x = targetX;
         currentPallet.y = targetY;
-
         const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
         palletDiv.style.left = `${targetX}px`;
         palletDiv.style.top = `${targetY}px`;
@@ -258,15 +251,11 @@ function dragMove(e) {
 
 function dragEnd() {
     if (!currentPallet) return;
-
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
     palletDiv.style.zIndex = 1; 
-
     currentPallet.lastValidX = currentPallet.x; 
     currentPallet.lastValidY = currentPallet.y;
-    
     updateLinearMeters(); 
-    
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
     document.removeEventListener('touchmove', dragMove);
