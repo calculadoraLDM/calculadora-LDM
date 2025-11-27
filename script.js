@@ -7,8 +7,7 @@ let nextGroupId = 1;
 let colorIndex = 0;
 let currentPallet = null; 
 
-// --- Funciones de Utilidad y Carga ---
-
+// --- Funciones de Utilidad y Carga (Definidas en window para HTML) ---
 function getNextColor() {
     const color = COLORS[colorIndex % COLORS.length];
     colorIndex++;
@@ -82,14 +81,12 @@ window.addPallets = function() {
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // 1. Recalcular la colocación para TODOS los palets no colocados
-    // Esta es la lógica crítica de estabilidad: buscamos el primer hueco disponible.
     pallets.forEach(p => p.placed = false); // Reseteamos la colocación
 
     pallets.forEach(p => {
         let placed = false;
         
-        // Búsqueda simple y estricta de arriba-izquierda (prioriza la compactación lateral)
+        // Búsqueda estricta: X primero, luego Y. Esto garantiza que se apilen correctamente.
         for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
             for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
                 
@@ -100,11 +97,12 @@ function renderTruck() {
                     p.lastValidX = x_pos;
                     p.lastValidY = y_pos;
                     placed = true;
+                    // Salimos del bucle Y (columna)
                     break; 
                 }
             }
             if (placed) {
-                // Si encontramos un lugar, salimos de la búsqueda X para mantener el orden.
+                // Salimos del bucle X (fila) para mantener la colocación compacta a la izquierda.
                 break; 
             }
         }
@@ -139,7 +137,7 @@ function renderTruck() {
     updateLinearMeters();
 }
 
-// --- Funciones de LDM y Arrastre (Mantenidas y Estables) ---
+// ... [El resto de funciones (updateLinearMeters, dragStart, dragMove, dragEnd) se mantienen igual ya que contienen la lógica LDM y de colisión estable] ...
 
 function updateLinearMeters() {
     let maxXTotal = 0;
@@ -158,7 +156,6 @@ function updateLinearMeters() {
         return acc;
     }, {});
 
-    // Renderizar la lista de grupos (Bloque 4)
     const groupSummaryDiv = document.getElementById('group-summary');
     const groupList = Object.values(groups).sort((a, b) => a.groupId - b.groupId);
     
@@ -184,10 +181,6 @@ function updateLinearMeters() {
     document.getElementById('result').textContent = `Metros lineales ocupados (LDM Total): ${totalLinearMeters.toFixed(2)} m`;
 }
 
-
-// --- Lógica de Arrastrar y Soltar con Colisión de Tope (ESTABLE) ---
-// (Las funciones dragStart, dragMove, dragEnd se mantienen sin cambios ya que la lógica es correcta)
-
 function dragStart(e) {
     if (e.type === 'touchstart') e.preventDefault(); 
     const palletDiv = e.target;
@@ -212,12 +205,9 @@ function dragMove(e) {
     const clientY = e.clientY || e.touches[0].clientY;
     let targetX = clientX - currentPallet.offsetX;
     let targetY = clientY - currentPallet.offsetY;
-
-    // 1. APLICAR LÍMITES DEL CAMIÓN (Inicialmente)
     targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
     targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
 
-    // 2. Colisión y Ajuste
     pallets.filter(p => p.id !== currentPallet.id && p.placed).forEach(otherPallet => {
         const isColliding = (
             targetX < otherPallet.x + otherPallet.length &&
@@ -225,6 +215,7 @@ function dragMove(e) {
             targetY < otherPallet.y + otherPallet.width &&
             targetY + currentPallet.width > otherPallet.y
         );
+
         if (isColliding) {
             const deltaX = targetX - currentPallet.x;
             const deltaY = targetY - currentPallet.y;
@@ -235,7 +226,6 @@ function dragMove(e) {
                 if (deltaY > 0) { targetY = otherPallet.y - currentPallet.width; } 
                 else { targetY = otherPallet.y + otherPallet.width; }
             }
-            // 3. RE-APLICAR LOS LÍMITES DEL CAMIÓN (CRÍTICO)
             targetX = Math.min(Math.max(0, targetX), TRUCK_WIDTH - currentPallet.length);
             targetY = Math.min(Math.max(0, targetY), TRUCK_HEIGHT - currentPallet.width);
         }
