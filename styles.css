@@ -1,4 +1,104 @@
-/* ... [Mantiene estilos de body, h1, form-container, input, button, result] ... */
+/* Estilos generales (Volviendo a la paleta Verde/Claro) */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6; /* Fondo gris muy claro */
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #333;
+}
+
+/* Encabezado */
+h1 {
+    font-size: 2.5em;
+    margin-top: 20px;
+    color: #1e3a34; /* Verde oscuro */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.form-container h2 {
+    color: #00796b;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    font-size: 1.3em;
+}
+
+/* Estilo para los campos de entrada */
+.form-container label {
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: block;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box; 
+    font-size: 1em;
+    background-color: #f9f9f9;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #00796b; /* Verde oscuro */
+    box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
+}
+
+/* Botón */
+button {
+    background-color: #ff8f00; /* Naranja oscuro */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.1s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #e67c00; 
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Resultado LDM */
+#result {
+    font-size: 1.5em;
+    margin: 30px auto;
+    font-weight: bold;
+    color: #e65100;
+    padding: 15px;
+    background-color: #fff3e0;
+    border-radius: 5px;
+    max-width: 600px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
 
 /* --- VISUALIZACIÓN PRINCIPAL (Flexbox) --- */
 .main-content {
@@ -6,7 +106,6 @@
     justify-content: center;
     align-items: flex-start;
     width: 95%;
-    /* Aumentamos el ancho máximo para la nueva escala (1360 * 0.90 = 1224px) */
     max-width: 1400px; 
     margin: 0 auto 30px auto;
     gap: 20px;
@@ -14,30 +113,27 @@
 
 .truck-column {
     flex-grow: 1;
-    /* Necesita espacio para la cabina */
     max-width: 1350px; 
 }
 
 /* --- MARCO EXTERNO Y SILUETA DEL CAMIÓN --- */
 .truck-frame {
     position: relative;
-    /* Ajustamos el ancho para que la tractora encaje */
     width: 1550px; 
     margin: 0 auto;
     
-    /* ESCALA APLICADA A TODO EL MARCO (Camión y Cabina) */
+    /* ESCALA GRANDE PERO SEGURA */
     transform: scale(0.90); 
     transform-origin: top left;
 }
 
-/* Silueta de la Cabina (Tractora) */
+/* Silueta de la Cabina (Tractora) - Utilizando Rojo, Blanco, Negro */
 .tractor-cab {
     position: absolute;
-    /* Las dimensiones están ajustadas para encajar con el remolque de 244px de alto */
     width: 190px;
     height: 300px; 
     background-color: #e62e2e; /* Rojo de la cabina */
-    left: -195px; /* Colocar a la izquierda del remolque */
+    left: -195px; 
     bottom: -1px; 
     border-radius: 10px 0 0 10px;
     border: 3px solid #333;
@@ -63,7 +159,7 @@
     max-width: 1360px; 
     margin: 20px auto 0;
     overflow: hidden; 
-    padding: 10px 0 0 0; /* Ajustamos padding */
+    padding: 10px 0 0 0; 
 }
 
 .truck {
@@ -71,14 +167,13 @@
     width: 1360px; 
     height: 244px; 
     
-    /* Quitamos la escala de aquí, ya la aplica .truck-frame */
     transform: none; 
     
     margin: 0 auto; 
     border: 3px solid #333;
-    background-color: #cfd8dc; 
+    background-color: #e0e0e0; /* Volver al gris más claro */
     border-radius: 4px;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     user-select: none; 
     cursor: default;
     min-width: 1360px;
@@ -87,8 +182,8 @@
 /* --- RUEDAS --- */
 .wheels-container {
     position: absolute;
-    bottom: -60px; /* Colocación bajo el camión */
-    left: -195px; /* Desde el inicio de la cabina */
+    bottom: -60px;
+    left: -195px; 
     width: 1550px;
     height: 50px;
     z-index: 0;
@@ -105,10 +200,9 @@
 
 /* Posiciones de las ruedas de la tractora */
 .wheel-tractor-1 { left: 50px; }
-.wheel-tractor-2 { left: 100px; } /* Rueda doble para la tracción */
+.wheel-tractor-2 { left: 100px; } 
 
 /* Posiciones de las ruedas del remolque */
-/* Notar que las posiciones son relativas al .truck-frame (ancho total de 1550px) */
 .wheel-trailer-1 { left: 950px; }
 .wheel-trailer-2 { left: 1000px; }
 
@@ -118,4 +212,55 @@
 .wheel-trailer-5 { left: 1250px; }
 .wheel-trailer-6 { left: 1300px; }
 
-/* ... [Mantiene estilos de .summary-column, .pallet, etc.] ... */
+/* --- RESUMEN DE CARGAS (Mantenido) --- */
+.summary-column {
+    width: 300px; 
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #e65100; 
+}
+
+.summary-column h2 {
+    color: #e65100;
+    font-size: 1.2em;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    margin-top: 0;
+}
+/* ... [Resto de estilos de summary-column, group-item, etc.] ... */
+
+
+/* Palets */
+.pallet {
+    position: absolute;
+    border: 2px solid #263238; 
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    cursor: grab; 
+    transition: box-shadow 0.1s ease-in-out; 
+    opacity: 0.95;
+    z-index: 1; 
+}
+
+.pallet:active {
+    cursor: grabbing; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); 
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 0.95; transform: scale(1); }
+}
+.pallet {
+    animation: fadeIn 0.4s ease-in-out;
+}
