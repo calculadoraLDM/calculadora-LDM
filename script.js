@@ -12,11 +12,6 @@ function addPallets() {
         return;
     }
 
-    // Nota: La lógica original añadía palets a la lista global 'pallets' en cada llamada.
-    // Para evitar que los palets se apilen sin control si el usuario pulsa varias veces,
-    // se podría considerar vaciar 'pallets' aquí o añadir una función 'clearPallets()'.
-    // Por ahora, seguimos con la lógica de añadir al arreglo existente.
-
     for (let i = 0; i < palletQuantity; i++) {
         pallets.push({ width: palletWidth, length: palletLength });
     }
@@ -29,30 +24,26 @@ function renderTruck() {
     truck.innerHTML = '';
 
     let positions = []; // Lista de posiciones ocupadas
-    let maxX = 0; // Para calcular los metros lineales
+    let x = 0, y = 0, maxX = 0, totalLinearMeters = 0;
 
     pallets.forEach((pallet, index) => {
         let placed = false;
-        let x = 0, y = 0;
 
         // Encuentra un lugar disponible para el pallet
-        // Itera sobre las posibles posiciones (x, y)
-        findPosition:
         for (let i = 0; i <= truckWidth - pallet.length; i++) {
             for (let j = 0; j <= truckHeight - pallet.width; j++) {
                 if (isPositionAvailable(i, j, pallet, positions)) {
                     x = i;
                     y = j;
                     placed = true;
-                    break findPosition; // Sale de ambos bucles
+                    break;
                 }
             }
+            if (placed) break;
         }
 
         if (!placed) {
-            alert(`No caben más palets en el camión. Se han colocado ${index} de ${pallets.length}.`);
-            // Se detiene el procesamiento de palets restantes
-            pallets.splice(index); // Mantiene solo los palets que sí se colocaron
+            alert('No caben más palets en el camión.');
             return;
         }
 
@@ -70,18 +61,17 @@ function renderTruck() {
 
         // Actualiza el cálculo de metros lineales
         maxX = Math.max(maxX, x + pallet.length);
+        totalLinearMeters = maxX / 100; // Convertimos a metros
     });
 
-    const totalLinearMeters = maxX / 100; // Convertimos a metros (100px = 1m)
     document.getElementById('result').textContent = `Metros lineales ocupados: ${totalLinearMeters.toFixed(2)} m`;
 }
 
 function isPositionAvailable(x, y, pallet, positions) {
-    // Comprueba si el nuevo palet colisiona con alguno de los ya colocados
     return !positions.some(pos => 
-        x < pos.x + pos.length && // El nuevo palet empieza antes de que termine el palet existente
-        x + pallet.length > pos.x && // El nuevo palet termina después de que empiece el palet existente
-        y < pos.y + pos.width && // Ídem para el eje Y
+        x < pos.x + pos.length &&
+        x + pallet.length > pos.x &&
+        y < pos.y + pos.width &&
         y + pallet.width > pos.y
     );
 }
