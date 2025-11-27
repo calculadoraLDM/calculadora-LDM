@@ -1,18 +1,10 @@
 const TRUCK_WIDTH = 1360; // 13.6m en cm
 const TRUCK_HEIGHT = 244; // 2.44m en cm
-const COLORS = ['#4a90e2', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c']; 
 let pallets = [];
 let nextPalletId = 0;
 
-// Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
-window.clearPallets = clearPallets;
-
-function clearPallets() {
-    pallets = [];
-    nextPalletId = 0;
-    renderTruck();
-}
+// La función clearPallets no existe en la versión original, la quitamos.
 
 function addPallets() {
     const palletWidth = parseInt(document.getElementById('pallet-width').value);
@@ -29,7 +21,6 @@ function addPallets() {
             id: nextPalletId++,
             width: palletWidth,
             length: palletLength,
-            color: COLORS[nextPalletId % COLORS.length],
             x: 0, 
             y: 0,
             placed: false
@@ -100,15 +91,12 @@ function renderTruck() {
         palletDiv.className = 'pallet';
         palletDiv.id = `pallet-${pallet.id}`;
         
-        palletDiv.style.backgroundColor = pallet.color;
+        // No hay colores por grupo en la versión original
         palletDiv.style.width = `${palletL}px`;
         palletDiv.style.height = `${palletW}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
         palletDiv.textContent = `${pallet.id + 1}`;
-        
-        // Manejador de doble clic (Si quieres la rotación, la añadiremos aquí)
-        // palletDiv.addEventListener('dblclick', () => toggleRotation(pallet.id));
         
         truck.appendChild(palletDiv);
         
