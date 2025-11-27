@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Carga de Camión - Final</title>
+    <title>Calculadora LDM PRO - Optimización de Carga</title>
     <link rel="stylesheet" href="styles.css">
-</head>
+    </head>
 <body>
     <div class="main-wrapper">
         <header class="app-header">
-            <h1>Simulador de Carga de Camión (LDM)</h1>
+            <h1>Sistema de Optimización de Carga (LDM PRO)</h1>
         </header>
 
         <div class="app-dashboard">
-
+            
             <div class="control-panel">
                 <div class="form-container card-panel">
-                    <h2>Entrada de Palets</h2>
+                    <h2>1. Definir Nuevo Lote</h2>
                     <div class="input-group">
                         <label for="pallet-width">Ancho del palet (cm):</label>
                         <input type="number" id="pallet-width" min="1" required> 
@@ -26,25 +26,26 @@
                         <input type="number" id="pallet-length" min="1" required>
                     </div>
                     <div class="input-group">
-                        <label for="pallet-quantity">Cantidad:</label>
+                        <label for="pallet-quantity">Cantidad (unidades):</label>
                         <input type="number" id="pallet-quantity" min="1" required>
                     </div>
                     
                     <div class="button-group">
-                        <button onclick="addPallets()">Añadir Palets</button>
-                        <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
+                        <button onclick="addPallets()">Añadir Lote (Auto-Optimizar)</button>
+                        <button onclick="clearPallets()" class="action-button-secondary">Limpiar Todo</button>
                     </div>
                 </div>
             </div>
 
             <div class="metrics-panel">
                 <div class="summary-area card-panel">
-                    <h2>📊 Resumen de LDM por Grupo</h2>
+                    <h2>📊 Resumen LDM y Gestión de Lotes</h2>
                     <div id="group-summary">
-                        <p class="empty-message">Aún no hay cargas añadidas.</p>
+                        <p class="empty-message">Aún no hay lotes de carga.</p>
                     </div>
                     <div class="total-ldm-label">
-                        LDM Total: <span id="total-ldm-value">0.00 m</span>
+                        <p>Total LDM Ocupado:</p>
+                        <span id="total-ldm-value" class="metric-value">0.00 m</span>
                     </div>
                 </div>
             </div>
@@ -52,11 +53,11 @@
         </div>
         
         <div class="visual-panel">
-            <h2 class="visual-title">Visualización del Remolque</h2>
+            <h2 class="visual-title">Visualización del Remolque (Doble Clic en Palet para Rotar)</h2>
             <div class="truck-container card-panel">
                 <div class="truck" id="truck"></div>
             </div>
-            <p id="result" class="result-display">Metros lineales ocupados: 0.00 m</p>
+            <p id="result" class="result-display">Metros lineales Máx: 0.00 m</p>
         </div>
 
     </div>
