@@ -7,6 +7,7 @@ let nextPalletId = 0;
 // Hacemos las funciones accesibles desde el HTML
 window.addPallets = addPallets;
 window.clearPallets = clearPallets;
+window.renderTruck = renderTruck; // Hacemos renderTruck global por si acaso
 
 function clearPallets() {
     pallets = [];
@@ -29,7 +30,7 @@ function addPallets() {
             id: nextPalletId++,
             width: palletWidth,
             length: palletLength,
-            color: COLORS[nextPalletId % COLORS.length], // Color simple
+            color: COLORS[nextPalletId % COLORS.length],
             x: 0, 
             y: 0,
             placed: false,
@@ -38,22 +39,6 @@ function addPallets() {
     }
 
     renderTruck();
-}
-
-/**
- * Verifica si una posición es válida, permitiendo opcionalmente la rotación.
- * Retorna {x, y, rotated} si encuentra un lugar, o null.
- */
-function findBestPosition(pallet) {
-    // Intentar orientación original (sin rotar)
-    let pos = findFit(pallet.width, pallet.length, pallet);
-    if (pos) return { x: pos.x, y: pos.y, rotated: false };
-
-    // Intentar orientación rotada
-    pos = findFit(pallet.length, pallet.width, pallet);
-    if (pos) return { x: pos.x, y: pos.y, rotated: true };
-    
-    return null;
 }
 
 /**
@@ -91,6 +76,9 @@ function findFit(pW, pL, currentPallet) {
     return null;
 }
 
+/**
+ * Colocación automática con optimización de rotación.
+ */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
@@ -99,12 +87,20 @@ function renderTruck() {
 
     pallets.forEach(pallet => {
         if (!pallet.placed) {
-            const placement = findBestPosition(pallet);
+            // Intenta orientación original (sin rotar)
+            let placement = findFit(pallet.width, pallet.length, pallet);
+            let rotated = false;
+
+            // Si no cabe, intenta orientación rotada
+            if (!placement) {
+                placement = findFit(pallet.length, pallet.width, pallet);
+                rotated = true;
+            }
             
             if (placement) {
                 pallet.x = placement.x;
                 pallet.y = placement.y;
-                pallet.rotated = placement.rotated;
+                pallet.rotated = rotated;
                 pallet.placed = true;
             } else {
                 console.warn(`Palet ${pallet.id} no pudo ser colocado.`);
@@ -133,7 +129,7 @@ function renderTruck() {
         palletDiv.textContent = `${pallet.id + 1}`;
         
         // Manejador de doble clic para la rotación
-        palletDiv.addEventListener('dblclick', (e) => toggleRotation(pallet.id, e.target));
+        palletDiv.addEventListener('dblclick', () => toggleRotation(pallet.id));
         
         truck.appendChild(palletDiv);
         
@@ -148,39 +144,32 @@ function renderTruck() {
 /**
  * Permite al usuario rotar un palet con doble clic.
  */
-function toggleRotation(id, element) {
+function toggleRotation(id) {
     const pallet = pallets.find(p => p.id === id);
     if (!pallet || !pallet.placed) return;
 
-    // Calcular nuevas dimensiones y posición
-    const newW = pallet.rotated ? pallet.length : pallet.width; // width -> length
-    const newL = pallet.rotated ? pallet.width : pallet.length; // length -> width
+    // Calcular nuevas dimensiones si se rotara
+    const newW = pallet.rotated ? pallet.width : pallet.length;
+    const newL = pallet.rotated ? pallet.length : pallet.width;
     
-    // Verificar si la nueva orientación cabe en la posición actual
-    // Temporalmente quitamos el palet del conteo
+    // Temporalmente quitamos el palet del conteo para verificar su nuevo espacio
     const tempPlaced = pallet.placed;
     pallet.placed = false;
 
-    // Comprobar colisión en la posición (pallet.x, pallet.y) con las nuevas dimensiones
-    let canRotate = findFit(newW, newL, pallet);
+    // Comprobar si cabe en la posición actual con la nueva orientación
+    let newPos = findFit(newW, newL, pallet);
 
-    // Si puede rotar y cabe en la posición actual
-    if (canRotate) {
+    // Si puede rotar y cabe en algún lugar (debería ser su posición actual si no hay colisión)
+    if (newPos) {
         pallet.rotated = !pallet.rotated;
-        pallet.x = canRotate.x;
-        pallet.y = canRotate.y;
+        pallet.x = newPos.x;
+        pallet.y = newPos.y;
         
-        // Actualizar el DOM inmediatamente para una mejor experiencia
-        element.style.width = `${newL}px`;
-        element.style.height = `${newW}px`;
-        element.style.left = `${canRotate.x}px`;
-        element.style.top = `${canRotate.y}px`;
-
-        // Llamar a renderTruck para recalcular el LDM
+        // Llamar a renderTruck para aplicar el cambio y recalcular el LDM
         pallet.placed = tempPlaced;
         renderTruck(); 
     } else {
-        alert('No se puede rotar aquí. No cabe o choca con otro palet.');
+        alert('No se puede rotar aquí. No cabe o choca con otro palet en la nueva orientación.');
     }
     
     // Restaurar el estado de colocación si no se rotó
