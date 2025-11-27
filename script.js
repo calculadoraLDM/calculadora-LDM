@@ -143,9 +143,14 @@ function findBestFitPosition(pallet, tryRotation) {
     return bestPlacement;
 }
 
+/**
+ * Módificado para priorizar el eje X (columna) y luego el eje Y (fila dentro de columna).
+ * Esto garantiza que se llene de ARRIBA A ABAJO antes de avanzar IZQUIERDA A DERECHA.
+ * También asegura que el punto inicial es x=0, eliminando el espacio a la izquierda.
+ */
 function findFitAtLocation(pW, pL, currentPallet) {
-    for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) {
-        for (let x = 0; x <= TRUCK_WIDTH - pL; x++) {
+    for (let x = 0; x <= TRUCK_WIDTH - pL; x++) { // Bucle exterior: Prioriza el eje X (izquierda a derecha)
+        for (let y = 0; y <= TRUCK_HEIGHT - pW; y++) { // Bucle interior: Prioriza el eje Y (arriba a abajo)
             if (isPositionAvailable(x, y, pW, pL, currentPallet)) {
                 return { x, y };
             }
