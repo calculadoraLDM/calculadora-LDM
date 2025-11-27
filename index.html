@@ -3,14 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora LDM Profesional</title>
+    <title>Simulador de Carga de Camión</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Cálculo de Metros de Carga (LDM)</h1>
+    <h1>Simulador de Carga de Camión (LDM)</h1>
     
-    <div class="summary-fixed" id="summary-fixed">
-        <h2>📊 LDM por Grupo</h2>
+    <div class="form-container">
+        <h2>📦 Añadir Palets</h2>
+        
+        <label for="pallet-width">Ancho del palet (cm):</label>
+        <input type="number" id="pallet-width" min="1" required value="80">
+        
+        <label for="pallet-length">Largo del palet (cm):</label>
+        <input type="number" id="pallet-length" min="1" required value="120">
+        
+        <label for="pallet-quantity">Cantidad:</label>
+        <input type="number" id="pallet-quantity" min="1" required value="5">
+        
+        <button onclick="addPallets()">Añadir Carga</button>
+    </div>
+    
+    <div class="summary-area">
+        <h2>📊 Resumen de LDM por Grupo</h2>
         <div id="group-summary">
             <p class="empty-message">Aún no hay cargas añadidas.</p>
         </div>
@@ -19,30 +34,11 @@
         </div>
     </div>
     
-    <div class="main-layout">
-        <div class="form-container">
-            <h2>📦 Añadir Palets</h2>
-            
-            <label for="pallet-width">Ancho del palet (cm):</label>
-            <input type="number" id="pallet-width" min="1" required value="80">
-            
-            <label for="pallet-length">Largo del palet (cm):</label>
-            <input type="number" id="pallet-length" min="1" required value="120">
-            
-            <label for="pallet-quantity">Cantidad:</label>
-            <input type="number" id="pallet-quantity" min="1" required value="5">
-            
-            <button onclick="addPallets()">Añadir Carga</button>
-        </div>
-        
-        <div class="truck-display-area">
-            <div class="truck-label">Área de Carga (2.44m x 13.6m)</div>
-            <div class="truck-container">
-                <div class="truck" id="truck"></div>
-            </div>
-            <p id="result" class="truck-result-label"></p>
-        </div>
+    <div class="truck-container">
+        <div class="truck" id="truck"></div>
     </div>
+
+    <p id="result"></p>
 
     <script src="script.js"></script>
 </body>
