@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container-centered">
+    <h1>Calculadora LDM Profesional</h1>
+    
+    <div class="main-layout">
         
-        <h1>CALCULADORA LDM PROFESIONAL</h1>
-
-        <div class="main-content-card">
-            
+        <div class="left-panel">
             <div class="form-container">
                 <h2>Entrada de Dimensiones</h2>
                 <label for="pallet-width">Ancho del palet (cm):</label>
@@ -25,23 +24,27 @@
                 <button onclick="clearPallets()" class="action-button-secondary">Limpiar</button>
             </div>
             
-            <div class="truck-summary-area">
-                
-                <div class="summary-area">
-                    <h2>Métricas de Carga</h2>
-                    <p class="ldm-total-label">LDM Total:</p>
-                    <span id="total-ldm-value" class="total-value">0.00 m</span>
-                </div>
-
-                <div class="truck-container">
-                    <div class="truck" id="truck"></div>
+            <div class="summary-area">
+                <h2>Métricas de LDM</h2>
+                <div id="group-summary">
+                    <p class="empty-message">Aún no hay cargas añadidas.</p>
                 </div>
             </div>
         </div>
 
-        <p id="result" class="ldm-result-footer">Metros lineales ocupados: 0.00 m</p>
-
+        <div class="right-panel">
+            
+            <div class="full-truck-display">
+                <div class="tractor-cab"></div> <div class="truck-container">
+                    <div class="truck" id="truck"></div>
+                </div>
+            </div>
+            
+            <p id="result">Metros lineales ocupados: 0.00 m</p>
+        </div>
+        
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
