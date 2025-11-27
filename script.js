@@ -47,7 +47,7 @@ function addPallets() {
             x: 0, 
             y: 0,
             placed: false,
-            lastValidX: 0, // Posición para revertir en caso de colisión
+            lastValidX: 0, 
             lastValidY: 0
         });
     }
@@ -58,7 +58,6 @@ function addPallets() {
 
 /**
  * Verifica si una posición (x, y) es válida para un palet.
- * Usada tanto para la colocación inicial como para la validación de arrastre.
  */
 function isPositionAvailable(x, y, pallet) {
     // 1. Verificar límites del camión
@@ -68,10 +67,8 @@ function isPositionAvailable(x, y, pallet) {
 
     // 2. Verificar solapamiento con otros palets ya colocados
     return !pallets.some(pos => {
-        // Ignorar palets que aún no han sido colocados o el palet que estamos comprobando
         if (!pos.placed || pos.id === pallet.id) return false;
 
-        // Comprobación de colisión (separating axis theorem simplificado)
         return (
             x < pos.x + pos.length &&
             x + pallet.length > pos.x &&
@@ -82,56 +79,52 @@ function isPositionAvailable(x, y, pallet) {
 }
 
 /**
- * Coloca los palets no colocados, actualiza la visualización y el LDM.
+ * Coloca los palets no colocados, priorizando el ancho del camión,
+ * y actualiza la visualización y el LDM.
  */
 function renderTruck() {
     const truck = document.getElementById('truck');
     
-    // --- Lógica de Colocación Inicial (Naive Bin Packing) ---
-    let currentX = 0;
-    let currentY = 0;
-    let rowHeight = 0;
-    
-    pallets.filter(p => !p.placed).forEach(pallet => {
+    // 1. Recalcular la colocación para TODOS los palets no colocados
+    pallets.filter(p => !p.placed).forEach(p => {
+        
+        // Colocación: Intenta colocar el palet en la primera posición disponible (0,0), 
+        // luego incrementando Y, luego incrementando X.
         let placed = false;
         
-        // Intentar colocar en la posición actual (currentX, currentY)
-        if (isPositionAvailable(currentX, currentY, pallet)) {
-            pallet.x = currentX;
-            pallet.y = currentY;
-            pallet.placed = true;
-            rowHeight = Math.max(rowHeight, pallet.width);
-            currentX += pallet.length;
-            placed = true;
-        } 
-        
-        // Si no cabe en lo que queda de fila, intenta en la siguiente (si hay espacio)
-        if (!placed && currentY + rowHeight + pallet.width <= TRUCK_HEIGHT) {
-            currentY += rowHeight;
-            currentX = 0;
-            rowHeight = pallet.width;
-            
-            if (isPositionAvailable(currentX, currentY, pallet)) {
-                pallet.x = currentX;
-                pallet.y = currentY;
-                pallet.placed = true;
-                currentX += pallet.length;
-                placed = true;
+        // Iterar sobre las posiciones posibles (coordenadas x,y de la esquina superior izquierda)
+        // La lógica de búsqueda de espacio es muy simple aquí, podemos mejorarla
+        // con un algoritmo de "Next Fit" o "Best Fit" si es necesario, 
+        // pero por ahora buscamos de izquierda a derecha, de arriba abajo.
+        for (let x_pos = 0; x_pos <= TRUCK_WIDTH - p.length; x_pos++) {
+            for (let y_pos = 0; y_pos <= TRUCK_HEIGHT - p.width; y_pos++) {
+                
+                if (isPositionAvailable(x_pos, y_pos, p)) {
+                    p.x = x_pos;
+                    p.y = y_pos;
+                    p.placed = true;
+                    p.lastValidX = x_pos;
+                    p.lastValidY = y_pos;
+                    placed = true;
+                    // Romper el bucle interno (y) para priorizar el apilamiento a lo ancho (y)
+                    break;
+                }
+            }
+            if (placed) {
+                // Si encontramos un lugar, salimos del bucle externo (x) 
+                // para que el siguiente palet comience la búsqueda desde (0,0) 
+                // y se fuerce a apilarse a la izquierda.
+                break;
             }
         }
         
-        if (placed) {
-            // Guardar la posición inicial como válida
-            pallet.lastValidX = pallet.x;
-            pallet.lastValidY = pallet.y;
-        } else {
-            console.warn(`Palet ${pallet.id} no cabe en la colocación automática.`);
-            // Si el palet no cabe automáticamente, lo marcamos como "no colocado"
-            pallet.placed = false; 
+        if (!placed) {
+            console.warn(`Palet ${p.id} no cabe en el camión.`);
+            p.placed = false; 
         }
     });
     
-    // --- Renderizar la Visualización Completa ---
+    // 2. Renderizar la Visualización
     truck.innerHTML = '';
     
     pallets.filter(p => p.placed).forEach(pallet => {
@@ -141,16 +134,14 @@ function renderTruck() {
         
         palletDiv.style.backgroundColor = pallet.color;
         
-        // Dimensiones y posición del DOM
         palletDiv.style.width = `${pallet.length}px`;
         palletDiv.style.height = `${pallet.width}px`;
         palletDiv.style.left = `${pallet.x}px`;
         palletDiv.style.top = `${pallet.y}px`;
         palletDiv.textContent = `${pallet.id + 1}`;
         
-        // Añadir manejadores de eventos para arrastrar
         palletDiv.addEventListener('mousedown', dragStart);
-        palletDiv.addEventListener('touchstart', dragStart, { passive: false }); // {passive: false} permite preventDefault
+        palletDiv.addEventListener('touchstart', dragStart, { passive: false });
         
         truck.appendChild(palletDiv);
     });
@@ -172,10 +163,9 @@ function updateLinearMeters() {
 }
 
 
-// --- Lógica de Arrastrar y Soltar (Drag and Drop) ---
+// --- Lógica de Arrastrar y Soltar (Drag and Drop) (SIN CAMBIOS) ---
 
 function dragStart(e) {
-    // Para dispositivos táctiles, previene el desplazamiento de la pantalla
     if (e.type === 'touchstart') e.preventDefault(); 
     
     const palletDiv = e.target;
@@ -184,18 +174,14 @@ function dragStart(e) {
 
     if (!currentPallet) return;
 
-    // Determinar las coordenadas del evento (ratón o táctil)
     const clientX = e.clientX || e.touches[0].clientX;
     const clientY = e.clientY || e.touches[0].clientY;
     
-    // Calcular el desfase entre el puntero y la esquina superior izquierda del palet
     currentPallet.offsetX = clientX - currentPallet.x;
     currentPallet.offsetY = clientY - currentPallet.y;
 
-    // Elevar el z-index para que se vea por encima de otros palets
     palletDiv.style.zIndex = 10;
     
-    // Añadir los eventos de movimiento y soltar al DOCUMENTO
     document.addEventListener('mousemove', dragMove);
     document.addEventListener('mouseup', dragEnd);
     document.addEventListener('touchmove', dragMove, { passive: false });
@@ -205,7 +191,6 @@ function dragStart(e) {
 function dragMove(e) {
     if (!currentPallet) return;
     
-    // Para dispositivos táctiles, previene el desplazamiento de la pantalla
     if (e.type === 'touchmove') e.preventDefault();
 
     const clientX = e.clientX || e.touches[0].clientX;
@@ -232,20 +217,17 @@ function dragEnd() {
     if (!currentPallet) return;
 
     const palletDiv = document.getElementById(`pallet-${currentPallet.id}`);
-    palletDiv.style.zIndex = 1; // Restaurar el z-index
+    palletDiv.style.zIndex = 1; 
 
-    // --- Validación de Solapamiento al soltar ---
-    
     // Si la nueva posición es válida
     if (isPositionAvailable(currentPallet.x, currentPallet.y, currentPallet)) {
-        // Movimiento válido: actualiza la última posición válida
         currentPallet.lastValidX = currentPallet.x;
         currentPallet.lastValidY = currentPallet.y;
         updateLinearMeters();
     } else {
-        // Colisión: revierte a la última posición válida conocida
         alert('¡Colisión! Por favor, mueve el palet a un espacio libre.');
         
+        // Revierte a la última posición válida
         currentPallet.x = currentPallet.lastValidX; 
         currentPallet.y = currentPallet.lastValidY;
         
@@ -254,7 +236,6 @@ function dragEnd() {
         palletDiv.style.top = `${currentPallet.y}px`;
     }
 
-    // Limpiar manejadores y el palet actual
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
     document.removeEventListener('touchmove', dragMove);
